@@ -1,0 +1,158 @@
+{
+    "nodes": [
+      { "id": 1, "type": "barracks" },
+      { "id": 2, "type": "barracks" },
+      { "id": 3, "type": "treasure" },
+      { "id": 4, "type": "barracks" },
+      { "id": 5, "type": "treasure" },
+      { "id": 6, "type": "barracks" },
+      { "id": 7, "type": "barracks" },
+      { "id": 8, "type": "treasure" },
+      { "id": 9, "type": "treasure" },
+      { "id": 10, "type": "treasure" },
+      { "id": 11, "type": "treasure" },
+      { "id": 12, "type": "treasure" },
+      { "id": 13, "type": "barracks" },
+      { "id": 14, "type": "treasure" }
+    ],
+    "edges": [
+      { 
+        "from": 1, 
+        "to": 2, 
+        "squad": [
+          { "unit": "Goblin", "placement": 2 }
+        ]
+      },
+      { 
+        "from": 1, 
+        "to": 3, 
+        "squad": [
+          { "unit": "Goblin", "placement": 2 }
+        ]
+      },
+      { 
+        "from": 2, 
+        "to": 4, 
+        "squad": [
+          { "unit": "Goblin", "placement": 1 },
+          { "unit": "Goblin", "placement": 3 }
+        ]
+      },
+      { 
+        "from": 2, 
+        "to": 5, 
+        "squad": [
+          { "unit": "Goblin", "placement": 1 },
+          { "unit": "Goblin", "placement": 3 }
+        ]
+      },
+      { 
+        "from": 3, 
+        "to": 6, 
+        "squad": [
+          { "unit": "Goblin", "placement": 1 },
+          { "unit": "Goblin", "placement": 3 }
+        ]
+      },
+      { 
+        "from": 4, 
+        "to": 7, 
+        "squad": [
+          { "unit": "Ork", "placement": 2 },
+          { "unit": "Goblin", "placement": 5 }
+          
+        ]
+      },
+      { 
+        "from": 4, 
+        "to": 8, 
+        "squad": [
+          { "unit": "Ork", "placement": 2 }
+        ]
+      },
+      { 
+        "from": 5, 
+        "to": 9, 
+        "squad": [
+          { "unit": "Goblin", "placement": 1 },
+          { "unit": "Goblin", "placement": 2 },
+          { "unit": "Goblin", "placement": 3 }
+        ]
+      },
+      { 
+        "from": 6, 
+        "to": 10, 
+        "squad": [
+          { "unit": "Ork", "placement": 2 },
+          { "unit": "Goblin", "placement": 5 }
+          
+        ]
+      },
+      { 
+        "from": 6, 
+        "to": 11, 
+        "squad": [
+          { "unit": "Goblin", "placement": 1 },
+          { "unit": "Goblin", "placement": 2 },
+          { "unit": "Goblin", "placement": 3 }
+        ]
+      },
+      { 
+        "from": 7, 
+        "to": 12, 
+        "squad": [
+          { "unit": "HeavyOrk", "placement": 2 }
+        ]
+      },
+      { 
+        "from": 8, 
+        "to": 12, 
+        "squad": [
+          { "unit": "Ork", "placement": 1 },
+          { "unit": "Goblin", "placement": 2 },
+          { "unit": "Goblin", "placement": 3 }
+        ]
+      },
+      { 
+        "from": 9, 
+        "to": 12, 
+        "squad": [
+          { "unit": "Goblin", "placement": 1 },
+          { "unit": "Goblin", "placement": 2 },
+          { "unit": "Goblin", "placement": 3 },
+          { "unit": "Goblin", "placement": 5 }
+        ]
+      },
+      { 
+        "from": 10, 
+        "to": 13, 
+        "squad": [
+          { "unit": "HeavyOrk", "placement": 2 }
+        ]
+      },
+      { 
+        "from": 11, 
+        "to": 13, 
+        "squad": [
+          { "unit": "Ork", "placement": 1 },
+          { "unit": "Goblin", "placement": 2 },
+          { "unit": "Goblin", "placement": 3 }
+        ]
+      },
+      { 
+        "from": 12, 
+        "to": 14, 
+        "squad": [
+          { "unit": "OrkShaman", "placement": 6 }
+        ]
+      },
+      { 
+        "from": 13, 
+        "to": 14, 
+        "squad": [
+          { "unit": "Ogre", "placement": 4 }
+        ]
+      }
+    ]
+  }
+  
