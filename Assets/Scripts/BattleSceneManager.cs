@@ -7,8 +7,8 @@ using System.Linq;
 
 public class BattleSceneManager : MonoBehaviour
 {
-    public Transform playerSquadPanel;
-    public Transform enemySquadPanel;
+    public GameObject playerSquadPanel;
+    public GameObject enemySquadPanel;
     public Button fightButton;
     public Button winButton;
     public Button loseButton;
@@ -114,12 +114,12 @@ public class BattleSceneManager : MonoBehaviour
         playerSquadWrapper = JsonUtility.FromJson<UnitArrayWrapper>(playerSquadJson);
         FulfillUnitDetails(playerSquadWrapper.units);
         ApplyBuffs(playerSquadWrapper.units);
-        PlaceUnits(playerSquadWrapper.units, playerSquadPanel, playerUnits);
+        PlaceUnits(playerSquadWrapper.units, playerSquadPanel.transform, playerUnits);
 
         string enemySquadJson = PlayerPrefs.GetString("EnemySquad", "{}");
         enemySquadWrapper = JsonUtility.FromJson<UnitArrayWrapper>(enemySquadJson);
         FulfillUnitDetails(enemySquadWrapper.units);
-        PlaceUnits(enemySquadWrapper.units, enemySquadPanel, enemyUnits);
+        PlaceUnits(enemySquadWrapper.units, enemySquadPanel.transform, enemyUnits);
     }
 
     void FulfillUnitDetails(Unit[] squad)
@@ -215,6 +215,20 @@ public class BattleSceneManager : MonoBehaviour
     {
         fightButton.gameObject.SetActive(false);
         battleStarted = true;
+        Image panelImage = playerSquadPanel.GetComponent<Image>(); 
+        if (panelImage != null)
+        {
+            Color color = panelImage.color;
+            color.a = 0;
+            panelImage.color = color;
+        }
+        panelImage = enemySquadPanel.GetComponent<Image>(); 
+        if (panelImage != null)
+        {
+            Color color = panelImage.color;
+            color.a = 0;
+            panelImage.color = color;
+        }
     }
 
     GameObject GetClosestTarget(GameObject attacker, Dictionary<int, GameObject> potentialTargets)

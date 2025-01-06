@@ -54,21 +54,18 @@ public class RewardsManager : MonoBehaviour
             return;
         }
 
-        // Add the new unit or merge it with existing units
-        bool added = false;
-        for (int i = 0; i < squad.Count; i++)
-        {
-            if (squad[i] == null)
-            {
-                squad[i] = new Unit { unit = newUnit, placement = i + 1 };
-                added = true;
-                break;
-            }
-        }
-
-        if (!added)
-        {
-            squad.Add(new Unit { unit = newUnit, placement = squad.Count + 1 });
+        List<int> freeSpaces = new List<int> { 1, 2, 3, 4, 5, 6 }; 
+        foreach (var unit in squad) 
+        { 
+            if (freeSpaces.Contains(unit.placement)) 
+            { 
+                freeSpaces.Remove(unit.placement); 
+            } 
+        } // Add the new unit to a free spot
+        if (freeSpaces.Count > 0) 
+        { 
+            int freeSpot = freeSpaces[0]; 
+            squad.Add(new Unit { unit = newUnit, placement = freeSpot });
         }
 
         // Merge units if necessary

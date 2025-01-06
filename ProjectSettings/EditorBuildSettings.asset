@@ -15,9 +15,6 @@ EditorBuildSettings:
     path: Assets/Scenes/CrusadeSetupScene.unity
     guid: 997fdc4b0982ed14a8ea4c3aae2476eb
   - enabled: 1
-    path: Assets/Scenes/LoseScene.unity
-    guid: 04abd2c346e442748a7d85b9676aa2ef
-  - enabled: 1
     path: Assets/Scenes/MapScene.unity
     guid: 8b2dd40767ce60b4bbf4df9fdf227f2d
   - enabled: 1
@@ -27,11 +24,8 @@ EditorBuildSettings:
     path: Assets/Scenes/RewardsScene.unity
     guid: 52a411297d412184d9c935268fe32619
   - enabled: 1
-    path: Assets/Scenes/SquadSettingsScene.unity
-    guid: 358034ee342c7d1438383869626d8e77
-  - enabled: 1
-    path: Assets/Scenes/WinScene.unity
-    guid: 1e0bb23cec5932e408611928284ccb4b
+    path: Assets/Scenes/SquadDetailsScene.unity
+    guid: 01fed22711478354199cbbc239018fb1
   m_configObjects:
     com.unity.adaptiveperformance.google.android.provider_settings: {fileID: 11400000, guid: d9e2c5adb1a02e64bbf1ae1753feda13, type: 2}
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 12d17dc1f3be20740a8249320e6d1ad2, type: 2}

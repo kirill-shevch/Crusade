@@ -75,9 +75,10 @@ public class MapLoader : MonoBehaviour
 
         // Instantiate the player prefab on the map
         playerObject = Instantiate(playerPrefab, startNode.transform.position, Quaternion.identity, transform);
-        playerObject.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+        playerObject.transform.localScale = new Vector3(0.015f, 0.015f, 0.015f);
         playerObject.GetComponent<Image>().sprite = GetUnitSprite(selectedCharacter);
         playerObject.name = selectedCharacter;
+        playerObject.GetComponent<Button>().onClick.AddListener(() => OnSquadClicked(playerSquadWrapper.units, 1));
 
         visitedNodes.Add(startNodeId);
     }
@@ -117,6 +118,14 @@ public class MapLoader : MonoBehaviour
                 }
             }
         }
+    }
+
+    void OnSquadClicked(Unit[] squad, int isPlayerSquad = 0)
+    {
+        PlayerPrefs.SetString("DetailsSquad", JsonUtility.ToJson(new UnitArrayWrapper { units = squad }));
+        PlayerPrefs.SetInt("isPlayerSquad", isPlayerSquad);
+        PlayerPrefs.Save();
+        SceneManager.LoadScene("SquadDetailsScene");
     }
 
     void SaveSquadsInfo(Edge edge, int targetNodeId)
@@ -238,7 +247,7 @@ public class MapLoader : MonoBehaviour
                 image.sprite = GetUnitSprite(edge.squad[0].unit);
                 unitImage.transform.SetParent(edgeObject.transform);
                 unitImage.transform.position = (fromNode.transform.position + toNode.transform.position) / 2;
-                unitImage.AddComponent<Button>().onClick.AddListener(() => Debug.Log("Unit on edge clicked"));
+                unitImage.AddComponent<Button>().onClick.AddListener(() => OnSquadClicked(edge.squad));
 
                 RectTransform rectTransform = unitImage.GetComponent<RectTransform>();
                 rectTransform.sizeDelta = new Vector2(1, 1); // Set width and height to 1
