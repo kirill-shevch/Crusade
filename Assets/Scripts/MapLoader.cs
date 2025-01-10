@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,9 +9,9 @@ public class MapLoader : MonoBehaviour
 {
     public GameObject nodePrefab;
     public GameObject edgePrefab;
+    public GameObject roadPrefab;
     public Sprite barracksSprite;
     public Sprite treasureSprite;
-    public Material lineMaterial;
     public GameObject playerPrefab;
     private GameObject playerObject;
     private NodeController currentPlayerNode;
@@ -26,6 +27,7 @@ public class MapLoader : MonoBehaviour
         LoadMapConfig();
         CreateMap();
         SpawnPlayerSquad();
+        CenterOnPlayerNode();
         CheckAvailableNodes();
     }
 
@@ -154,6 +156,7 @@ public class MapLoader : MonoBehaviour
     {
         playerObject.transform.position = node.transform.position;
         currentPlayerNode = node;
+        StartCoroutine(CenterOnPlayerNodeAnimated());
         CheckAvailableNodes();
     }
 
@@ -193,9 +196,9 @@ public class MapLoader : MonoBehaviour
         }
 
         Dictionary<int, GameObject> nodeObjects = new Dictionary<int, GameObject>();
-        float xSpacing = 3.7f; // Adjust horizontal spacing
-        float ySpacing = 2.0f; // Adjust vertical spacing
-        float xOffset = -9f; // Initial horizontal offset
+        float xSpacing = 6.7f; // Adjust horizontal spacing
+        float ySpacing = 4.0f; // Adjust vertical spacing
+        float xOffset = 0f; // Initial horizontal offset
 
         foreach (var level in levelNodes)
         {
@@ -227,18 +230,26 @@ public class MapLoader : MonoBehaviour
 
             GameObject edgeObject = new GameObject("Edge" + edge.from + "-" + edge.to);
             edgeObject.transform.SetParent(transform);
-            edgeObject.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+            edgeObject.transform.localScale = new Vector3(0.015f, 0.015f, 0.015f);
 
-            LineRenderer lineRenderer = edgeObject.AddComponent<LineRenderer>();
-            lineRenderer.SetPosition(0, fromNode.transform.position);
-            lineRenderer.SetPosition(1, toNode.transform.position);
-            lineRenderer.startWidth = 0.1f;
-            lineRenderer.endWidth = 0.1f;
+            // Remove LineRenderer code and use Road prefab
+            GameObject roadInstance = Instantiate(roadPrefab, edgeObject.transform);
 
-            // Add grey color to the line
-            //lineRenderer.material = lineMaterial;
-            lineRenderer.startColor = Color.grey;
-            lineRenderer.endColor = Color.grey;
+            // Calculate rotation and position to align the road between nodes
+            Vector3 direction = toNode.transform.position - fromNode.transform.position;
+            float distance = direction.magnitude;
+            roadInstance.transform.position = fromNode.transform.position + direction / 2;
+            roadInstance.transform.rotation = Quaternion.LookRotation(Vector3.forward, direction);
+            roadInstance.transform.localScale = new Vector3(0.1f, roadInstance.transform.localScale.y, distance);
+
+            // Adjust width of the road
+            Vector3 localScale = roadInstance.transform.localScale;
+            localScale.x = 0.1f; // Adjusting width
+            roadInstance.transform.localScale = localScale;
+
+            // Make roadInstance a child of edgeObject
+            roadInstance.transform.SetParent(edgeObject.transform);
+
 
             if (edge.squad.Length > 0 && !visitedEdges.Contains(edge.from + "-" + edge.to))
             {
@@ -250,7 +261,7 @@ public class MapLoader : MonoBehaviour
                 unitImage.AddComponent<Button>().onClick.AddListener(() => OnSquadClicked(edge.squad));
 
                 RectTransform rectTransform = unitImage.GetComponent<RectTransform>();
-                rectTransform.sizeDelta = new Vector2(1, 1); // Set width and height to 1
+                rectTransform.sizeDelta = new Vector2(2, 2); // Set width and height to 1
             }
         }
     }
@@ -292,5 +303,40 @@ public class MapLoader : MonoBehaviour
             }
         }
         return null;
+    }
+
+    void CenterOnPlayerNode()
+    { 
+        // Convert currentPlayerNode's position to screen space
+        Vector3 screenPos = currentPlayerNode.transform.position; 
+        // Calculate the offset
+        Vector3 offset = new Vector3(0.5f, 0.5f, screenPos.z) - screenPos; 
+        // Apply the offset to MapManager to center
+        transform.position += offset; 
+    }
+
+    IEnumerator CenterOnPlayerNodeAnimated()
+    {
+        // Convert currentPlayerNode's position to screen space
+        Vector3 screenPos = currentPlayerNode.transform.position;
+
+        // Calculate the offset
+        Vector3 offset = new Vector3(0.5f, 0.5f, screenPos.z) - screenPos;
+
+        // Define duration and speed
+        float duration = 1.0f; // Duration in seconds
+        float elapsedTime = 0f;
+        Vector3 startingPos = transform.position;
+
+        while (elapsedTime < duration)
+        {
+            // Smoothly move the MapManager towards the target position
+            transform.position = Vector3.Lerp(startingPos, startingPos + offset, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure the final position is set
+        transform.position = startingPos + offset;
     }
 }
