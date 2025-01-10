@@ -17,6 +17,7 @@ public class MapLoader : MonoBehaviour
     private NodeController currentPlayerNode;
     private List<int> visitedNodes = new List<int>();
     private List<string> visitedEdges = new List<string>();
+    private bool isMoving = false;
 
     private MapConfig mapConfig;
 
@@ -97,7 +98,7 @@ public class MapLoader : MonoBehaviour
 
     void OnNodeClicked(NodeController node)
     {
-        if (currentPlayerNode.connectedNodes.Contains(node))
+        if (currentPlayerNode.connectedNodes.Contains(node) && !isMoving)
         {
             string edgeKey1 = currentPlayerNode.nodeId + "-" + node.nodeId; 
             string edgeKey2 = node.nodeId + "-" + currentPlayerNode.nodeId; // Check if the edge has already been visited
@@ -196,8 +197,8 @@ public class MapLoader : MonoBehaviour
         }
 
         Dictionary<int, GameObject> nodeObjects = new Dictionary<int, GameObject>();
-        float xSpacing = 6.7f; // Adjust horizontal spacing
-        float ySpacing = 4.0f; // Adjust vertical spacing
+        float xSpacing = 5f; // Adjust horizontal spacing
+        float ySpacing = 3.2f; // Adjust vertical spacing
         float xOffset = 0f; // Initial horizontal offset
 
         foreach (var level in levelNodes)
@@ -230,7 +231,7 @@ public class MapLoader : MonoBehaviour
 
             GameObject edgeObject = new GameObject("Edge" + edge.from + "-" + edge.to);
             edgeObject.transform.SetParent(transform);
-            edgeObject.transform.localScale = new Vector3(0.015f, 0.015f, 0.015f);
+            edgeObject.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 
             // Remove LineRenderer code and use Road prefab
             GameObject roadInstance = Instantiate(roadPrefab, edgeObject.transform);
@@ -261,7 +262,7 @@ public class MapLoader : MonoBehaviour
                 unitImage.AddComponent<Button>().onClick.AddListener(() => OnSquadClicked(edge.squad));
 
                 RectTransform rectTransform = unitImage.GetComponent<RectTransform>();
-                rectTransform.sizeDelta = new Vector2(2, 2); // Set width and height to 1
+                rectTransform.sizeDelta = new Vector2(1, 1); // Set width and height to 1
             }
         }
     }
@@ -317,6 +318,7 @@ public class MapLoader : MonoBehaviour
 
     IEnumerator CenterOnPlayerNodeAnimated()
     {
+        isMoving = true;
         // Convert currentPlayerNode's position to screen space
         Vector3 screenPos = currentPlayerNode.transform.position;
 
@@ -338,5 +340,6 @@ public class MapLoader : MonoBehaviour
 
         // Ensure the final position is set
         transform.position = startingPos + offset;
+        isMoving = false;
     }
 }

@@ -10,7 +10,7 @@
             "minimumAttackDamage": 5,
             "maximumAttackDamage": 10,
             "attackSpeed": 1.5,
-            "attackRange": 1.0
+            "attackRange": 1.5
         },
         {
             "unit": "Ork",
@@ -22,7 +22,7 @@
             "minimumAttackDamage": 15,
             "maximumAttackDamage": 25,
             "attackSpeed": 0.8,
-            "attackRange": 1.0
+            "attackRange": 1.5
         },
         {
             "unit": "Militia",
@@ -34,7 +34,7 @@
             "minimumAttackDamage": 10,
             "maximumAttackDamage": 15,
             "attackSpeed": 1.0,
-            "attackRange": 1.0
+            "attackRange": 1.5
         },
         {
             "unit": "Hunter",
@@ -70,7 +70,7 @@
             "minimumAttackDamage": 27,
             "maximumAttackDamage": 45,
             "attackSpeed": 0.6,
-            "attackRange": 1.0
+            "attackRange": 1.5
         },
         {
             "unit": "Knight",
@@ -82,7 +82,7 @@
             "minimumAttackDamage": 18,
             "maximumAttackDamage": 27,
             "attackSpeed": 0.9,
-            "attackRange": 1.0
+            "attackRange": 1.5
         },
         {
             "unit": "Archer",
@@ -118,7 +118,7 @@
             "minimumAttackDamage": 18,
             "maximumAttackDamage": 27,
             "attackSpeed": 0.8,
-            "attackRange": 1.0
+            "attackRange": 1.5
         },
         {
             "unit": "Wizard",
@@ -166,7 +166,7 @@
             "minimumAttackDamage": 55,
             "maximumAttackDamage": 75,
             "attackSpeed": 0.3,
-            "attackRange": 1.0
+            "attackRange": 1.5
         },
         {
             "unit": "Defender",
@@ -178,7 +178,7 @@
             "minimumAttackDamage": 27,
             "maximumAttackDamage": 40,
             "attackSpeed": 0.9,
-            "attackRange": 1.0
+            "attackRange": 1.5
         },
         {
             "unit": "Sorcerer",

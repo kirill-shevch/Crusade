@@ -66,10 +66,12 @@ public class BattleSceneManager : MonoBehaviour
                 float distanceToTarget = Vector2.Distance(unitObject.transform.position, targetObject.transform.position);
                 if (distanceToTarget <= unitData.attackRange)
                 {
+                    Debug.Log($"{unitData.unit} attacks!");
                     Attack(unitObject, targetObject, unitData, targetData);
                 }
                 else
                 {
+                    Debug.Log($"{unitData.unit} moves!");
                     MoveTowardsTarget(unitObject, targetObject, unitData);
                 }
             }
@@ -78,14 +80,25 @@ public class BattleSceneManager : MonoBehaviour
 
     void MoveTowardsTarget(GameObject unitObject, GameObject targetObject, Unit unitData)
     {
+        var rb = unitObject.GetComponent<Rigidbody2D>();
         Vector3 direction = (targetObject.transform.position - unitObject.transform.position).normalized;
-        unitObject.transform.position += direction * unitData.moveSpeed * Time.deltaTime;
+        Vector3 newPosition = unitObject.transform.position + direction * unitData.moveSpeed * Time.deltaTime;
+
+        rb.MovePosition(newPosition);
     }
+
 
     void Attack(GameObject attackerObject, GameObject targetObject, Unit attackerData, Unit targetData)
     {
         if (attackerData.attackCooldown <= 0f)
         {
+            Rigidbody2D rb = attackerObject.GetComponent<Rigidbody2D>(); 
+            if (rb != null) 
+            { 
+                rb.linearVelocity = Vector2.zero; 
+                rb.angularVelocity = 0f; 
+            }
+
             float damage = Random.Range(attackerData.minimumAttackDamage, attackerData.maximumAttackDamage) - targetData.armor;
             var oldHealth = targetData.health;
             targetData.health -= (int)Mathf.Max(1, damage);

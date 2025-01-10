@@ -232,7 +232,6 @@ MonoBehaviour:
   roadPrefab: {fileID: 1956908156413406396, guid: 798171c89fd5b8848a7e313a8e1aab22, type: 3}
   barracksSprite: {fileID: 5002096206624228670, guid: 25c236b68382aa24f873b3ab5fc48ec6, type: 3}
   treasureSprite: {fileID: -8533606670350889490, guid: ace8b47550ced4149a00641b198a8b7a, type: 3}
-  lineMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   playerPrefab: {fileID: 5180039812258326723, guid: faba46cd48b963f48a353fde27d53378, type: 3}
 --- !u!4 &1111261315
 Transform:
@@ -244,7 +243,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -192.5138, y: 120.70374, z: -9977.985}
-  m_LocalScale: {x: 200, y: 200, z: 110.84999}
+  m_LocalScale: {x: 150, y: 150, z: 110.84999}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1134856923}
