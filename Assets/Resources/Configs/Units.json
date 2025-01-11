@@ -6,11 +6,12 @@
             "description": "A fast monster with weak but fast attacks. Low armor and melee attack range.",
             "health": 50,
             "armor": 5,
-            "moveSpeed": 5.0,
+            "moveSpeed": 10.0,
             "minimumAttackDamage": 5,
             "maximumAttackDamage": 10,
             "attackSpeed": 1.5,
-            "attackRange": 1.5
+            "attackRange": 1.5,
+            "projectile": "club"
         },
         {
             "unit": "Ork",
@@ -18,11 +19,12 @@
             "description": "A slow monster with slow but heavier attacks. Medium armor and big health. Melee attack range.",
             "health": 120,
             "armor": 20,
-            "moveSpeed": 2.0,
+            "moveSpeed": 4.0,
             "minimumAttackDamage": 15,
             "maximumAttackDamage": 25,
             "attackSpeed": 0.8,
-            "attackRange": 1.5
+            "attackRange": 1.5,
+            "projectile": "club"
         },
         {
             "unit": "Militia",
@@ -30,11 +32,12 @@
             "description": "A human warrior with medium speed, medium damage, medium health and armor. Slow attacks and melee attack range.",
             "health": 80,
             "armor": 15,
-            "moveSpeed": 3.0,
+            "moveSpeed": 6.0,
             "minimumAttackDamage": 10,
             "maximumAttackDamage": 15,
             "attackSpeed": 1.0,
-            "attackRange": 1.5
+            "attackRange": 1.5,
+            "projectile": "sword"
         },
         {
             "unit": "Hunter",
@@ -42,11 +45,12 @@
             "description": "A human archer with low damage, low speed, low armor and health. Range attack and medium attack speed.",
             "health": 60,
             "armor": 10,
-            "moveSpeed": 2.5,
+            "moveSpeed": 5,
             "minimumAttackDamage": 5,
             "maximumAttackDamage": 10,
             "attackSpeed": 1.2,
-            "attackRange": 5.0
+            "attackRange": 5.0,
+            "projectile": "arrow"
         },
         {
             "unit": "Scolar",
@@ -54,11 +58,12 @@
             "description": "A human novice mage with low damage and attack speed, low speed and low armor. Range attack.",
             "health": 50,
             "armor": 5,
-            "moveSpeed": 2.0,
+            "moveSpeed": 4,
             "minimumAttackDamage": 8,
             "maximumAttackDamage": 12,
             "attackSpeed": 0.9,
-            "attackRange": 4.0
+            "attackRange": 4.0,
+            "projectile": "fireball"
         },
         {
             "unit": "HeavyOrk",
@@ -66,11 +71,12 @@
             "description": "This monster is very slow, but has a huge amount of health and armor. His attacks are slow but deadly. Melee attack range.",
             "health": 210,
             "armor": 36,
-            "moveSpeed": 1.5,
+            "moveSpeed": 3,
             "minimumAttackDamage": 27,
             "maximumAttackDamage": 45,
             "attackSpeed": 0.6,
-            "attackRange": 1.5
+            "attackRange": 1.5,
+            "projectile": "club"
         },
         {
             "unit": "Knight",
@@ -78,11 +84,12 @@
             "description": "A human hero, pretty slow, with high armor but medium HP. His damage is bigger than average, but attacks are a bit slow. Melee attack range.",
             "health": 135,
             "armor": 27,
-            "moveSpeed": 2.5,
+            "moveSpeed": 5,
             "minimumAttackDamage": 18,
             "maximumAttackDamage": 27,
             "attackSpeed": 0.9,
-            "attackRange": 1.5
+            "attackRange": 1.5,
+            "projectile": "sword"
         },
         {
             "unit": "Archer",
@@ -90,11 +97,12 @@
             "description": "A human hero, fast, with medium armor and HP, high damage and medium attack speed. High attack range.",
             "health": 105,
             "armor": 18,
-            "moveSpeed": 4.0,
+            "moveSpeed": 8,
             "minimumAttackDamage": 18,
             "maximumAttackDamage": 30,
             "attackSpeed": 1.1,
-            "attackRange": 7.0
+            "attackRange": 7.0,
+            "projectile": "arrow"
         },
         {
             "unit": "Mage",
@@ -102,11 +110,12 @@
             "description": "A human hero, slow, with low armor and health. Huge attack damage and low attack speed. Medium high attack range.",
             "health": 85,
             "armor": 9,
-            "moveSpeed": 1.8,
+            "moveSpeed": 3,
             "minimumAttackDamage": 14,
             "maximumAttackDamage": 22,
             "attackSpeed": 0.5,
-            "attackRange": 5.5
+            "attackRange": 5.5,
+            "projectile": "fireball"
         },
         {
             "unit": "Soldier",
@@ -114,11 +123,12 @@
             "description": "A promoted Militia, similar to the militia man but with improved stats.",
             "health": 140,
             "armor": 27,
-            "moveSpeed": 4.5,
+            "moveSpeed": 9,
             "minimumAttackDamage": 18,
             "maximumAttackDamage": 27,
             "attackSpeed": 0.8,
-            "attackRange": 1.5
+            "attackRange": 1.5,
+            "projectile": "sword"
         },
         {
             "unit": "Wizard",
@@ -126,11 +136,12 @@
             "description": "A promoted Scolar, similar to the scolar but with improved stats.",
             "health": 85,
             "armor": 9,
-            "moveSpeed": 3.6,
+            "moveSpeed": 6,
             "minimumAttackDamage": 14,
             "maximumAttackDamage": 22,
             "attackSpeed": 0.8,
-            "attackRange": 7.0
+            "attackRange": 7.0,
+            "projectile": "fireball"
         },
         {
             "unit": "Bower",
@@ -138,11 +149,12 @@
             "description": "A promoted Hunter, with high damage but slow attacks. Slightly higher health and armor.",
             "health": 105,
             "armor": 18,
-            "moveSpeed": 4.5,
+            "moveSpeed": 8,
             "minimumAttackDamage": 18,
             "maximumAttackDamage": 30,
             "attackSpeed": 0.6,
-            "attackRange": 7.0
+            "attackRange": 7.0,
+            "projectile": "arrow"
         },
         {
             "unit": "OrkShaman",
@@ -150,11 +162,12 @@
             "description": "A powerful ork wizard, slow with medium-low armor and health. High damage, lower than medium attack speed, and high attack range.",
             "health": 150,
             "armor": 16,
-            "moveSpeed": 1.2,
+            "moveSpeed": 3,
             "minimumAttackDamage": 40,
             "maximumAttackDamage": 55,
             "attackSpeed": 0.45,
-            "attackRange": 10.0
+            "attackRange": 10.0,
+            "projectile": "fireball"
         },
         {
             "unit": "Ogre",
@@ -162,11 +175,12 @@
             "description": "A huge warrior, slow with low armor but outstanding health and damage. Very slow attack speed and melee attack range.",
             "health": 320,
             "armor": 28,
-            "moveSpeed": 1.0,
+            "moveSpeed": 2,
             "minimumAttackDamage": 55,
             "maximumAttackDamage": 75,
             "attackSpeed": 0.3,
-            "attackRange": 1.5
+            "attackRange": 1.5,
+            "projectile": "club"
         },
         {
             "unit": "Defender",
@@ -174,11 +188,12 @@
             "description": "A human warrior with medium speed and health, very heavy armor, medium damage, and attack speed. Melee attack range.",
             "health": 210,
             "armor": 65,
-            "moveSpeed": 3.5,
+            "moveSpeed": 7,
             "minimumAttackDamage": 27,
             "maximumAttackDamage": 40,
             "attackSpeed": 0.9,
-            "attackRange": 1.5
+            "attackRange": 1.5,
+            "projectile": "sword"
         },
         {
             "unit": "Sorcerer",
@@ -186,11 +201,12 @@
             "description": "A powerful human mage with low health and armor but high damage and medium attack speed. Ranged attack.",
             "health": 130,
             "armor": 18,
-            "moveSpeed": 2.7,
+            "moveSpeed": 4,
             "minimumAttackDamage": 25,
             "maximumAttackDamage": 40,
             "attackSpeed": 0.7,
-            "attackRange": 9.0
+            "attackRange": 9.0,
+            "projectile": "fireball"
         }
     ]
 }

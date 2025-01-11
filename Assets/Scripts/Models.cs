@@ -28,6 +28,7 @@ public class Unit
     public string description; 
     public int level;
     public float attackCooldown = 0f;
+    public string projectile;
 }
 
 [System.Serializable]

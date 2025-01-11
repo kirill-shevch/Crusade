@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -66,12 +67,10 @@ public class BattleSceneManager : MonoBehaviour
                 float distanceToTarget = Vector2.Distance(unitObject.transform.position, targetObject.transform.position);
                 if (distanceToTarget <= unitData.attackRange)
                 {
-                    Debug.Log($"{unitData.unit} attacks!");
                     Attack(unitObject, targetObject, unitData, targetData);
                 }
                 else
                 {
-                    Debug.Log($"{unitData.unit} moves!");
                     MoveTowardsTarget(unitObject, targetObject, unitData);
                 }
             }
@@ -92,26 +91,23 @@ public class BattleSceneManager : MonoBehaviour
     {
         if (attackerData.attackCooldown <= 0f)
         {
-            Rigidbody2D rb = attackerObject.GetComponent<Rigidbody2D>(); 
-            if (rb != null) 
-            { 
-                rb.linearVelocity = Vector2.zero; 
-                rb.angularVelocity = 0f; 
-            }
-
-            float damage = Random.Range(attackerData.minimumAttackDamage, attackerData.maximumAttackDamage) - targetData.armor;
-            var oldHealth = targetData.health;
-            targetData.health -= (int)Mathf.Max(1, damage);
-
-            // Update target's health text
-            Debug.Log($"{attackerData.unit} attacks! Changing health of {targetData.unit} from {oldHealth} to {targetData.health}.");
-            unitHPTexts[targetObject].text = targetData.health.ToString();
-            if (targetData.health <= 0)
+            Rigidbody2D rb = attackerObject.GetComponent<Rigidbody2D>();
+            if (rb != null)
             {
-                targetObject.SetActive(false);
-                Destroy(unitHPTexts[targetObject].gameObject);
-                OnUnitDeath(targetObject);
+                rb.linearVelocity = Vector2.zero; // Clear linear velocity
+                rb.angularVelocity = 0f; // Clear angular velocity
             }
+
+            // Spawn the projectile
+            GameObject projectile = new GameObject("Projectile");
+            projectile.transform.position = attackerObject.transform.position;
+            projectile.transform.rotation = Quaternion.LookRotation(Vector3.forward, targetObject.transform.position - attackerObject.transform.position);
+            SpriteRenderer spriteRenderer = projectile.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = Resources.Load<Sprite>($"Images/{attackerData.projectile}");
+            spriteRenderer.sortingOrder = 1;
+            projectile.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+
+            StartCoroutine(ProjectileMovement(projectile, targetObject, attackerData, targetData));
 
             attackerData.attackCooldown = attackerData.attackSpeed;
         }
@@ -154,6 +150,7 @@ public class BattleSceneManager : MonoBehaviour
                 unit.maximumAttackDamage = detailedUnit.maximumAttackDamage;
                 unit.attackSpeed = detailedUnit.attackSpeed;
                 unit.attackRange = detailedUnit.attackRange;
+                unit.projectile = detailedUnit.projectile;
             }
         }
     }
@@ -280,6 +277,40 @@ public class BattleSceneManager : MonoBehaviour
                 return unit;
         }
         return null;
+    }
+
+    IEnumerator ProjectileMovement(GameObject projectile, GameObject targetObject, Unit attackerData, Unit targetData)
+    {
+        float speed = 10f; // Adjust the projectile speed as needed
+        Vector3 startPosition = projectile.transform.position;
+        Vector3 targetPosition = targetObject.transform.position;
+
+        while ((targetPosition - projectile.transform.position).sqrMagnitude > 0.1f)
+        {
+            projectile.transform.position = Vector3.MoveTowards(projectile.transform.position, targetPosition, speed * Time.deltaTime);
+            yield return null;
+        }
+
+        // Ensure the projectile reaches the target
+        projectile.transform.position = targetPosition;
+
+        // Deal damage
+        float damage = Random.Range(attackerData.minimumAttackDamage, attackerData.maximumAttackDamage) - targetData.armor;
+        var oldHealth = targetData.health;
+        targetData.health -= (int)Mathf.Max(1, damage);
+
+        // Update target's health text
+        Debug.Log($"{attackerData.unit} attacks! Changing health of {targetData.unit} from {oldHealth} to {targetData.health}.");
+        unitHPTexts[targetObject].text = targetData.health.ToString();
+        if (targetData.health <= 0)
+        {
+            targetObject.SetActive(false);
+            unitHPTexts[targetObject].text = string.Empty;
+            OnUnitDeath(targetObject);
+        }
+
+        // Destroy projectile after it reaches the target
+        Destroy(projectile);
     }
 
 
