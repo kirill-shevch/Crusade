@@ -13,6 +13,12 @@ public class UnitArrayWrapper
     public Unit[] units;
 }
 
+[System.Serializable]
+public class AbilityArrayWrapper
+{
+    public Ability[] abilities;
+}
+
 [System.Serializable] 
 public class Unit 
 { 
@@ -29,6 +35,7 @@ public class Unit
     public int level;
     public float attackCooldown = 0f;
     public string projectile;
+    public string ability;
 }
 
 [System.Serializable]
@@ -44,4 +51,12 @@ public class MapConfig
 {
     public Node[] nodes;
     public Edge[] edges;
+}
+
+[System.Serializable]
+public class Ability
+{
+    public string abilityName;
+    public string buttonImage;
+    public string effectImage;
 }

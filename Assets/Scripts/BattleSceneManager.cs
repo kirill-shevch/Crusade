@@ -10,6 +10,7 @@ public class BattleSceneManager : MonoBehaviour
 {
     public GameObject playerSquadPanel;
     public GameObject enemySquadPanel;
+    public GameObject abilityPanel;
     public Button fightButton;
     public Button winButton;
     public Button loseButton;
@@ -124,6 +125,7 @@ public class BattleSceneManager : MonoBehaviour
         FulfillUnitDetails(playerSquadWrapper.units);
         ApplyBuffs(playerSquadWrapper.units);
         PlaceUnits(playerSquadWrapper.units, playerSquadPanel.transform, playerUnits);
+        PlaceAbilities(playerSquadWrapper.units);
 
         string enemySquadJson = PlayerPrefs.GetString("EnemySquad", "{}");
         enemySquadWrapper = JsonUtility.FromJson<UnitArrayWrapper>(enemySquadJson);
@@ -151,6 +153,7 @@ public class BattleSceneManager : MonoBehaviour
                 unit.attackSpeed = detailedUnit.attackSpeed;
                 unit.attackRange = detailedUnit.attackRange;
                 unit.projectile = detailedUnit.projectile;
+                unit.ability = detailedUnit.ability;
             }
         }
     }
@@ -195,6 +198,43 @@ public class BattleSceneManager : MonoBehaviour
         }
     }
 
+    void PlaceAbilities(Unit[] squad)
+    {
+        TextAsset abilitiesConfig = Resources.Load<TextAsset>("Configs/Abilities");
+        AbilityArrayWrapper abilitiesWrapper = JsonUtility.FromJson<AbilityArrayWrapper>(abilitiesConfig.text);
+    
+        List<RectTransform> instantiatedButtons = new List<RectTransform>();
+    
+        foreach (Unit unit in squad)
+        {
+            if (!string.IsNullOrEmpty(unit.ability))
+            {
+                Ability ability = abilitiesWrapper.abilities.FirstOrDefault(a => a.abilityName == unit.ability);
+                if (ability != null)
+                {
+                    // Create button
+                    GameObject abilityButton = new GameObject("AbilityButton");
+                    Button button = abilityButton.AddComponent<Button>();
+                    Image buttonImage = abilityButton.AddComponent<Image>();
+                    Debug.Log(ability.buttonImage);
+                    buttonImage.sprite = Resources.Load<Sprite>($"Images/{ability.buttonImage}");
+                    RectTransform rectTransform = abilityButton.GetComponent<RectTransform>();
+                    rectTransform.sizeDelta = new Vector2(200, 200); // Radius 100 makes diameter 200
+    
+                    // Set parent
+                    abilityButton.transform.SetParent(abilityPanel.transform, false);
+    
+                    // Position buttons
+                    int buttonCount = instantiatedButtons.Count;
+                    float totalHeight = buttonCount * 200 + (buttonCount - 1) * 10;
+                    float startY = 400;
+    
+                    rectTransform.anchoredPosition = new Vector2(0, startY - buttonCount * (200 + 10));
+                    instantiatedButtons.Add(rectTransform);
+                }
+            }
+        }
+    }
     void ApplyBuffs(Unit[] squad)
     {
         string buffs = PlayerPrefs.GetString("PlayerBuffs", "");

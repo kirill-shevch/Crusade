@@ -1,0 +1,19 @@
+{
+    "abilities": [
+        {
+            "abilityName": "shieldbash",
+            "buttonImage": "shieldbashbutton",
+            "effectImage": "shieldbasheffect"
+        },        
+        {
+            "abilityName": "rapidfire",
+            "buttonImage": "rapidfirebutton",
+            "effectImage": "rapidfireeffect"
+        },
+        {
+            "abilityName": "thunderstorm",
+            "buttonImage": "thunderstormbutton",
+            "effectImage": "thunderstormeffect"
+        }
+    ]
+}
