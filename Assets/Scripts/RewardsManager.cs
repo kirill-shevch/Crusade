@@ -1,35 +1,54 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
+using System.Collections.Generic;
+using System.Linq;
 
 public class RewardsManager : MonoBehaviour
 {
     public TextMeshProUGUI rewardsText;
     public Button okayButton;
 
+    private readonly string[] mergePairs = { "Militia-Soldier", "Soldier-Defender", "Scolar-Wizard", "Wizard-Sorcerer", "Hunter-Bower" };
+    private Dictionary<string, string> mergeMap;
+
     void Start()
+    {
+        InitializeMergeMap();
+        HandleRewards();
+        okayButton.onClick.AddListener(OnOkayButtonClicked);
+    }
+
+    void InitializeMergeMap()
+    {
+        mergeMap = new Dictionary<string, string>();
+        foreach (string pair in mergePairs)
+        {
+            string[] units = pair.Split('-');
+            mergeMap[units[0]] = units[1];
+        }
+    }
+
+    void HandleRewards()
     {
         string nodeType = PlayerPrefs.GetString("CurrentNodeType");
         string rewardsInfo = "";
 
-        if (nodeType == "barracks")
+        switch (nodeType)
         {
-            rewardsInfo = HandleBarracksRewards();
-        }
-        else if (nodeType == "treasure")
-        {
-            rewardsInfo = HandleTreasureRewards();
-        }
-        else if (nodeType == "end")
-        {
-            rewardsInfo = "Congratulations! You have completed the game!";
+            case "barracks":
+                rewardsInfo = HandleBarracksRewards();
+                break;
+            case "treasure":
+                rewardsInfo = HandleTreasureRewards();
+                break;
+            case "end":
+                rewardsInfo = "Congratulations! You have completed the game!";
+                break;
         }
 
         rewardsText.text = rewardsInfo;
-
-        okayButton.onClick.AddListener(OnOkayButtonClicked);
     }
 
     string HandleBarracksRewards()
@@ -42,72 +61,53 @@ public class RewardsManager : MonoBehaviour
 
     void AddOrMergeUnit(string newUnit)
     {
-        // Retrieve the player's squad from PlayerPrefs
-        string playerSquadJson = PlayerPrefs.GetString("PlayerSquad", "{}");
-        UnitArrayWrapper playerSquadWrapper = JsonUtility.FromJson<UnitArrayWrapper>(playerSquadJson);
-        List<Unit> squad = new List<Unit>(playerSquadWrapper.units);
+        // Get current squad
+        UnitArrayWrapper squadWrapper = GameManager.Instance.PlayerSquad;
+        List<Unit> squad = squadWrapper?.units != null ? 
+            new List<Unit>(squadWrapper.units) : new List<Unit>();
 
-        // Ensure we don't exceed the max size of the squad
-        if (squad.Count >= 6)
+        // Find first available placement (1-6)
+        var occupiedPlacements = squad.Select(u => u.placement).ToList();
+        int newPlacement = Enumerable.Range(1, 6)
+            .FirstOrDefault(i => !occupiedPlacements.Contains(i));
+
+        // Add unit to first available spot
+        if (newPlacement != 0)
         {
-            Debug.Log("Squad is already at maximum capacity.");
-            return;
+            squad.Add(new Unit { unit = newUnit, placement = newPlacement });
         }
 
-        List<int> freeSpaces = new List<int> { 1, 2, 3, 4, 5, 6 }; 
-        foreach (var unit in squad) 
-        { 
-            if (freeSpaces.Contains(unit.placement)) 
-            { 
-                freeSpaces.Remove(unit.placement); 
-            } 
-        } // Add the new unit to a free spot
-        if (freeSpaces.Count > 0) 
-        { 
-            int freeSpot = freeSpaces[0]; 
-            squad.Add(new Unit { unit = newUnit, placement = freeSpot });
-        }
-
-        // Merge units if necessary
-        MergeUnits(squad);
-
-        // Save the updated squad to PlayerPrefs
-        playerSquadWrapper.units = squad.ToArray();
-        PlayerPrefs.SetString("PlayerSquad", JsonUtility.ToJson(playerSquadWrapper));
-        PlayerPrefs.Save();
-    }
-
-    void MergeUnits(List<Unit> squad)
-    {
-        string[] mergePairs = { "Militia-Soldier", "Soldier-Defender", "Scolar-Wizard", "Wizard-Sorcerer", "Hunter-Bower" };
-        Dictionary<string, string> mergeMap = new Dictionary<string, string>();
-
-        foreach (string pair in mergePairs)
-        {
-            string[] units = pair.Split('-');
-            mergeMap[units[0]] = units[1];
-        }
-
+        // Perform cascade merging
         bool merged;
         do
         {
             merged = false;
             foreach (var entry in mergeMap)
             {
-                var unitsToMerge = squad.FindAll(u => u.unit == entry.Key);
+                var unitsToMerge = squad
+                    .Where(u => u.unit == entry.Key)
+                    .OrderBy(u => u.placement)
+                    .ToList();
+
                 if (unitsToMerge.Count >= 2)
                 {
-                    // Remove the units being merged
+                    // Remove the two units being merged
                     squad.Remove(unitsToMerge[0]);
                     squad.Remove(unitsToMerge[1]);
 
-                    // Add the higher unit
-                    squad.Add(new Unit { unit = entry.Value, placement = squad.Count + 1 });
+                    // Add the merged unit in the lowest placement of the two merged units
+                    int mergedPlacement = unitsToMerge[0].placement;
+                    squad.Add(new Unit { unit = entry.Value, placement = mergedPlacement });
+
                     merged = true;
                     break;
                 }
             }
         } while (merged);
+
+        // Save updated squad
+        GameManager.Instance.SetPlayerSquad(new UnitArrayWrapper { units = squad.ToArray() });
+        GameManager.Instance.SaveGameState();
     }
 
     string HandleTreasureRewards()
@@ -124,15 +124,13 @@ public class RewardsManager : MonoBehaviour
     void OnOkayButtonClicked()
     {
         string nodeType = PlayerPrefs.GetString("CurrentNodeType");
-
         if (nodeType == "end")
         {
-            PlayerPrefs.DeleteAll();
-            SceneManager.LoadScene("MainMenuScene");
+            SceneController.Instance.LoadMainMenu();
         }
         else
         {
-            SceneManager.LoadScene("MapScene");
+            SceneController.Instance.LoadMap();
         }
     }
 }

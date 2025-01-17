@@ -115,6 +115,12 @@ public class SquadDetailsController : MonoBehaviour
 
     void OnUnitClicked(GameObject unitObject, Unit unit)
     {
+        if (selectedUnitObject != null)
+        {
+            // Reset previous selection
+            selectedUnitObject.transform.localScale = new Vector3(2, 2, 1);
+        }
+
         if (selectedUnitObject == unitObject)
         {
             // Unselect the unit
@@ -131,21 +137,31 @@ public class SquadDetailsController : MonoBehaviour
             // Select the unit
             selectedUnitObject = unitObject;
             selectedUnit = unit;
+            
+            // Make selected unit slightly larger
+            selectedUnitObject.transform.localScale = new Vector3(2.3f, 2.3f, 1);
 
-            // Retrieve buffs for the selected character
-            string buffs = PlayerPrefs.GetString("PlayerBuffs", "");
-            List<string> playerBuffs = new List<string>(buffs.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
-            string selectedCharacter = PlayerPrefs.GetString("SelectedCharacter", "Knight");
-
+            // Show unit details
             string buffsText = "";
+            string selectedCharacter = PlayerPrefs.GetString("SelectedCharacter", "Knight");
+            
+            // Only show buffs for the hero character
             if (unit.unit == selectedCharacter)
             {
-                buffsText = string.Join("\n", playerBuffs.Select(buff => $"- {buff}"));
+                string buffs = PlayerPrefs.GetString("PlayerBuffs", "");
+                List<string> playerBuffs = new List<string>(buffs.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
+                buffsText = playerBuffs.Count > 0 ? string.Join("\n", playerBuffs.Select(buff => $"- {buff}")) : "No buffs";
             }
 
             unitDetailsText.text = $"Name: {unit.unit}\nHealth: {unit.health}\nArmor: {unit.armor}\n" +
                                    $"Move Speed: {unit.moveSpeed}\nAttack Damage: {unit.minimumAttackDamage}-{unit.maximumAttackDamage}\n" +
-                                   $"Attack Speed: {unit.attackSpeed}\nAttack Range: {unit.attackRange}\n\nBuffs:\n{buffsText}";
+                                   $"Attack Speed: {unit.attackSpeed}\nAttack Range: {unit.attackRange}";
+            
+            // Add buffs section only for hero
+            if (unit.unit == selectedCharacter)
+            {
+                unitDetailsText.text += $"\n\nBuffs:\n{buffsText}";
+            }
 
             // Show movement buttons if it's a player's squad
             if (isPlayerSquad)
@@ -214,13 +230,19 @@ public class SquadDetailsController : MonoBehaviour
             {
                 GameObject unitObject = kvp.Key;
                 unitObject.transform.SetParent(cellDict[cellIndex].transform, false);
-                unitObject.transform.localScale = new Vector3(2, 2, 1);
+                unitObject.transform.localScale = unitObject == selectedUnitObject ? new Vector3(2.3f, 2.3f, 1) : new Vector3(2, 2, 1);
             }
         }
 
-        UnitArrayWrapper playerSquadWrapper = new UnitArrayWrapper { units = unitDict.Values.ToArray() };
-        PlayerPrefs.SetString("PlayerSquad", JsonUtility.ToJson(playerSquadWrapper));
-        PlayerPrefs.Save();
+        // Save the updated squad
+        if (isPlayerSquad)
+        {
+            UnitArrayWrapper playerSquadWrapper = new UnitArrayWrapper { units = unitDict.Values.ToArray() };
+            string squadJson = JsonUtility.ToJson(playerSquadWrapper);
+            PlayerPrefs.SetString("PlayerSquad", squadJson);
+            GameManager.Instance.SetPlayerSquad(playerSquadWrapper);
+            GameManager.Instance.SaveGameState();
+        }
     }
 
     void OnLeftButtonClicked()
