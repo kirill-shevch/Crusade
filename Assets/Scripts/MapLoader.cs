@@ -176,7 +176,6 @@ public class MapLoader : MonoBehaviour
         string edgeKey = $"{fromId}-{toId}";
         
         GameManager.Instance.AddVisitedEdge(edgeKey);
-        GameManager.Instance.SetCurrentNode(targetNodeId);
 
         // Save node type for rewards
         string nodeType = GetNodeTypeById(targetNodeId);

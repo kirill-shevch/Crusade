@@ -22,6 +22,7 @@ public class BattleSceneManager : MonoBehaviour
     private UnitArrayWrapper playerSquadWrapper;
     private UnitArrayWrapper enemySquadWrapper;
     private bool battleStarted = false;
+    [SerializeField] private float speedMultiplier = 1f;
 
     void Start()
     {
@@ -78,13 +79,21 @@ public class BattleSceneManager : MonoBehaviour
         }
     }
 
-    void MoveTowardsTarget(GameObject unitObject, GameObject targetObject, Unit unitData)
+    void MoveTowardsTarget(GameObject unitObject, GameObject targetObject, Unit unitData) 
     {
         var rb = unitObject.GetComponent<Rigidbody2D>();
-        Vector3 direction = (targetObject.transform.position - unitObject.transform.position).normalized;
-        Vector3 newPosition = unitObject.transform.position + direction * unitData.moveSpeed * Time.deltaTime;
-
+        Vector2 direction = (targetObject.transform.position - unitObject.transform.position).normalized;
+        
+        // Use Time.deltaTime instead of Time.fixedDeltaTime for consistent timing
+        float moveStep = unitData.moveSpeed * speedMultiplier * Time.deltaTime;
+        
+        // Move using MovePosition for more consistent movement across platforms
+        Vector2 newPosition = rb.position + (direction * moveStep);
         rb.MovePosition(newPosition);
+        
+        // Zero out any residual velocity
+        rb.linearVelocity = Vector2.zero;
+        rb.angularVelocity = 0f;
     }
 
 
@@ -125,7 +134,7 @@ public class BattleSceneManager : MonoBehaviour
         FulfillUnitDetails(playerSquadWrapper.units);
         ApplyBuffs(playerSquadWrapper.units);
         PlaceUnits(playerSquadWrapper.units, playerSquadPanel.transform, playerUnits);
-        PlaceAbilities(playerSquadWrapper.units);
+        PlaceAbilities(playerSquadWrapper.units, abilityPanel.transform, playerUnits);
 
         string enemySquadJson = PlayerPrefs.GetString("EnemySquad", "{}");
         enemySquadWrapper = JsonUtility.FromJson<UnitArrayWrapper>(enemySquadJson);
@@ -198,8 +207,9 @@ public class BattleSceneManager : MonoBehaviour
         }
     }
 
-    void PlaceAbilities(Unit[] squad)
+    void PlaceAbilities(Unit[] squad, Transform panel, Dictionary<int, GameObject> unitDict)
     {
+        Debug.Log("Placing abilities");
         TextAsset abilitiesConfig = Resources.Load<TextAsset>("Configs/Abilities");
         AbilityArrayWrapper abilitiesWrapper = JsonUtility.FromJson<AbilityArrayWrapper>(abilitiesConfig.text);
     
@@ -213,28 +223,174 @@ public class BattleSceneManager : MonoBehaviour
                 if (ability != null)
                 {
                     // Create button
-                    GameObject abilityButton = new GameObject("AbilityButton");
+                    GameObject abilityButton = new GameObject($"{ability.abilityName}Button");
                     Button button = abilityButton.AddComponent<Button>();
+                    button.interactable = false;
                     Image buttonImage = abilityButton.AddComponent<Image>();
-                    Debug.Log(ability.buttonImage);
                     buttonImage.sprite = Resources.Load<Sprite>($"Images/{ability.buttonImage}");
                     RectTransform rectTransform = abilityButton.GetComponent<RectTransform>();
-                    rectTransform.sizeDelta = new Vector2(200, 200); // Radius 100 makes diameter 200
+                    rectTransform.sizeDelta = new Vector2(150, 150); // Adjust size as needed
     
                     // Set parent
-                    abilityButton.transform.SetParent(abilityPanel.transform, false);
+                    abilityButton.transform.SetParent(panel.transform, false);
     
-                    // Position buttons
+                    // Position buttons (example positioning)
                     int buttonCount = instantiatedButtons.Count;
-                    float totalHeight = buttonCount * 200 + (buttonCount - 1) * 10;
-                    float startY = 400;
-    
-                    rectTransform.anchoredPosition = new Vector2(0, startY - buttonCount * (200 + 10));
+                    float totalWidth = buttonCount * 160; // 100 width + 10 spacing
+                    rectTransform.anchoredPosition = new Vector2(0, 450 + totalWidth);
                     instantiatedButtons.Add(rectTransform);
+    
+                    // Attach Ability Method
+                    if (ability.abilityName.ToLower() == "shieldbash")
+                    {
+                        button.onClick.AddListener(() => ShieldBash(unit, unitDict[unit.placement], button));
+                    }
+                    else if (ability.abilityName.ToLower() == "rapidfire")
+                    {
+                        button.onClick.AddListener(() => RapidFire(unit, unitDict[unit.placement], button));
+                    }
+                    else if (ability.abilityName.ToLower() == "thunderstorm")
+                    {
+                        button.onClick.AddListener(() => Thunderstorm(unit, button));
+                    }
                 }
             }
         }
     }
+
+    // Shieldbash Ability
+    private void ShieldBash(Unit caster, GameObject casterGameObject, Button abilityButton)
+    {
+        // Disable the button
+        abilityButton.interactable = false;
+
+        // Show EffectImage on caster
+        StartCoroutine(ShowEffectImage(casterGameObject, "shieldbasheffect", 1f));
+
+        // Find all units around the caster within a certain radius (e.g., 5 units)
+        float radius = 5f;
+        List<GameObject> targets = new List<GameObject>();
+
+        foreach (var unit in enemyUnits.Values)
+        {
+            if (unit != casterGameObject && unit.activeSelf)
+            {
+                float distance = Vector2.Distance(casterGameObject.transform.position, unit.transform.position);
+                if (distance <= radius)
+                {
+                    targets.Add(unit);
+                }
+            }
+        }
+
+        // Deal 25 damage and push back
+        foreach (var target in targets)
+        {
+            Unit targetData = target.GetComponent<UnitBehavior>().unit;
+            float oldHealth = targetData.health;
+            targetData.health -= 25;
+            unitHPTexts[target].text = targetData.health.ToString();
+
+            Debug.Log($"{caster.unit} used Shieldbash on {targetData.unit}, dealing 25 damage.");
+            
+            // Push back by teleporting
+            Vector2 pushDirection = (target.transform.position - casterGameObject.transform.position).normalized;
+            float pushDistance = 3f; // Constant distance to push back
+            target.transform.position += (Vector3)(pushDirection * pushDistance);
+
+            if (targetData.health <= 0)
+            {
+                target.SetActive(false);
+                unitHPTexts[target].text = string.Empty;
+                OnUnitDeath(target);
+            }
+        }
+    }
+
+    // Rapidfire Ability
+    private void RapidFire(Unit caster, GameObject casterGameObject, Button abilityButton)
+    {
+        Debug.Log("Rapidfire");
+        // Disable the button
+        abilityButton.interactable = false;
+
+        // Show EffectImage on caster
+        StartCoroutine(ShowEffectImage(casterGameObject, "rapidfireeffect", 3f));
+        // Increase attack speed
+        UnitBehavior behavior = casterGameObject.GetComponent<UnitBehavior>();
+        behavior.unit.attackSpeed -= 0.9f;
+
+        // Revert after 3 seconds
+        StartCoroutine(RevertRapidFire(behavior, 3f));
+    }
+
+    private IEnumerator RevertRapidFire(UnitBehavior behavior, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        behavior.unit.attackSpeed += 0.9f;
+    }
+
+    // Thunderstorm Ability
+    private void Thunderstorm(Unit caster, Button abilityButton)
+    {
+        // Disable the button
+        abilityButton.interactable = false;
+
+        // Find all enemy units
+        List<GameObject> enemies = enemyUnits.Values.Where(u => u.activeSelf).ToList();
+
+        foreach (var enemy in enemies)
+        {
+            // Show EffectImage on each enemy
+            StartCoroutine(ShowEffectImage(enemy, "thunderstormeffect", 1f));
+
+            // Deal 45 damage
+            Unit targetData = enemy.GetComponent<UnitBehavior>().unit;
+            float oldHealth = targetData.health;
+            targetData.health -= 45;
+            unitHPTexts[enemy].text = targetData.health.ToString();
+
+            Debug.Log($"{caster.unit} used Thunderstorm on {targetData.unit}, dealing 45 damage.");
+
+            if (targetData.health <= 0)
+            {
+                enemy.SetActive(false);
+                unitHPTexts[enemy].text = string.Empty;
+                OnUnitDeath(enemy);
+            }
+        }
+    }
+
+    // Helper method to show effect images
+    private IEnumerator ShowEffectImage(GameObject target, string effectImageName, float duration)
+    {
+        GameObject effect = new GameObject("EffectImage");
+        effect.transform.SetParent(target.transform);
+        SpriteRenderer renderer = effect.AddComponent<SpriteRenderer>();
+        renderer.sprite = Resources.Load<Sprite>($"Images/{effectImageName}");
+        renderer.sortingOrder = 2; // Ensure it's on top
+        effect.transform.localPosition = Vector3.zero;// Using localPosition since it's now parented
+        effect.transform.localScale = new Vector3(10f, 10f, 10f);
+        renderer.color = new Color(1f, 1f, 1f, 0.5f); // Half transparent
+
+        yield return new WaitForSeconds(duration);
+
+        Destroy(effect);
+    }
+
+    // Helper to get effect image name from ability name
+    private string GetAbilityEffectImage(string abilityName)
+    {
+        switch (abilityName.ToLower())
+        {
+            case "rapidfire":
+                return "rapidfireeffect";
+            // Add other cases if needed
+            default:
+                return "";
+        }
+    }
+
     void ApplyBuffs(Unit[] squad)
     {
         string buffs = PlayerPrefs.GetString("PlayerBuffs", "");
@@ -265,6 +421,14 @@ public class BattleSceneManager : MonoBehaviour
     {
         fightButton.gameObject.SetActive(false);
         battleStarted = true;
+
+        // Make activity panel buttons interactable
+        Button[] buttons = abilityPanel.GetComponentsInChildren<Button>();
+        foreach (Button button in buttons)
+        {
+            button.interactable = true;
+        }
+
         Image panelImage = playerSquadPanel.GetComponent<Image>(); 
         if (panelImage != null)
         {
@@ -377,8 +541,17 @@ public class BattleSceneManager : MonoBehaviour
     public void OnWinButtonClicked()
     {
         int targetNodeId = PlayerPrefs.GetInt("TargetNode", 1);
-        PlayerPrefs.SetInt("CharacterNode", targetNodeId);
-        SceneManager.LoadScene("RewardsScene");
+
+        if (GameManager.Instance.VisitedNodes.Contains(targetNodeId))
+        {
+            GameManager.Instance.SetCurrentNode(targetNodeId);
+            SceneController.Instance.LoadMap();
+        }
+        else
+        {
+            GameManager.Instance.SetCurrentNode(targetNodeId);
+            SceneManager.LoadScene("RewardsScene");
+        }
     }
 
     public void OnLoseButtonClicked()
