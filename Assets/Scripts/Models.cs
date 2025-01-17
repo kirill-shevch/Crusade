@@ -5,6 +5,8 @@ public class Node
 {
     public int id;
     public string type;
+    public float x;
+    public float y;
 }
 
 [System.Serializable]

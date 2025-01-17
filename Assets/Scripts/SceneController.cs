@@ -4,29 +4,66 @@ using UnityEngine.UI;
 
 public class SceneController : MonoBehaviour
 {
-    public Button continueButton; // Reference to the Continue button
+    public static SceneController Instance { get; private set; }
+    public Button continueButton;
 
-    void Start()
+    void Awake()
     {
-        // Check if there is an info about selected character
-        if (PlayerPrefs.HasKey("SelectedCharacter"))
+        if (Instance == null)
         {
-            // Enable Continue button and add listener
-            continueButton.interactable = true;
-            continueButton.onClick.AddListener(LoadMap);
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
-            // Clear existing listeners and disable Continue button
-            continueButton.onClick.RemoveAllListeners();
-            continueButton.interactable = false;
+            Destroy(gameObject);
         }
     }
 
-    // Method to load a scene by name
-    public void LoadScene(string sceneName)
+    void OnDestroy()
     {
-        SceneManager.LoadScene(sceneName);
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "MainMenuScene")
+        {
+            SetupMainMenuButtons();
+        }
+    }
+
+    void SetupMainMenuButtons()
+    {
+        // Find and setup continue button
+        continueButton = GameObject.FindGameObjectWithTag("ContinueButton")?.GetComponent<Button>();
+        if (continueButton != null)
+        {
+            bool hasSavedGame = PlayerPrefs.HasKey("SelectedCharacter") && !string.IsNullOrEmpty(PlayerPrefs.GetString("SelectedCharacter"));
+            continueButton.interactable = hasSavedGame;
+            continueButton.onClick.RemoveAllListeners();
+            if (hasSavedGame)
+            {
+                continueButton.onClick.AddListener(LoadMap);
+            }
+        }
+
+        // Find and setup new game button
+        Button newGameButton = GameObject.FindGameObjectWithTag("NewGameButton")?.GetComponent<Button>();
+        if (newGameButton != null)
+        {
+            newGameButton.onClick.RemoveAllListeners();
+            newGameButton.onClick.AddListener(LoadCrusadeSetup);
+        }
+
+        // Find and setup options button
+        Button optionsButton = GameObject.FindGameObjectWithTag("OptionsButton")?.GetComponent<Button>();
+        if (optionsButton != null)
+        {
+            optionsButton.onClick.RemoveAllListeners();
+            optionsButton.onClick.AddListener(LoadOptions);
+        }
     }
 
     // Method to load the Main Menu scene
@@ -55,9 +92,9 @@ public class SceneController : MonoBehaviour
     }
 
     // Method to load the Squad Settings scene
-    public void LoadSquadSettings()
+    public void SquadDetailsScene()
     {
-        SceneManager.LoadScene("SquadSettingsScene");
+        SceneManager.LoadScene("SquadDetailsScene");
     }
 
     // Method to load the Battle scene
@@ -75,6 +112,7 @@ public class SceneController : MonoBehaviour
     // Method to load the Lose scene
     public void LoadLose()
     {
+        PlayerPrefs.DeleteAll(); // Clear all saved data when player loses
         SceneManager.LoadScene("LoseScene");
     }
 
