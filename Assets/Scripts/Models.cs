@@ -51,6 +51,16 @@ public class Edge
 [System.Serializable]
 public class MapConfig
 {
+    public Map[] maps;
+}
+
+[System.Serializable]
+public class Map
+{
+    public string name;
+    public string background;
+    public string arena;
+    public string[] nextMaps;
     public Node[] nodes;
     public Edge[] edges;
 }

@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public List<string> VisitedEdges { get; private set; } = new List<string>();
     public string SelectedCharacter { get; private set; }
     public int CurrentNodeId { get; private set; }
+    public string CurrentMap { get; private set; }
     
     void Awake()
     {
@@ -53,6 +54,9 @@ public class GameManager : MonoBehaviour
         {
             VisitedEdges = new List<string>(visitedEdgesString.Split(','));
         }
+        
+        // Load current map, default to "FieldMap"
+        CurrentMap = PlayerPrefs.GetString("currentMap", "FieldMap");
     }
     
     public void SaveGameState()
@@ -67,6 +71,7 @@ public class GameManager : MonoBehaviour
         
         PlayerPrefs.SetString("VisitedNodes", string.Join(",", VisitedNodes));
         PlayerPrefs.SetString("VisitedEdges", string.Join(",", VisitedEdges));
+        PlayerPrefs.SetString("currentMap", CurrentMap);
         PlayerPrefs.Save();
     }
     
@@ -101,6 +106,12 @@ public class GameManager : MonoBehaviour
         SaveGameState();
     }
     
+    public void SetCurrentMap(string mapName)
+    {
+        CurrentMap = mapName;
+        SaveGameState();
+    }
+    
     public void ResetGame()
     {
         PlayerPrefs.DeleteAll();
@@ -109,5 +120,6 @@ public class GameManager : MonoBehaviour
         PlayerSquad = null;
         SelectedCharacter = "";
         CurrentNodeId = 1;
+        CurrentMap = "FieldMap";
     }
 } 

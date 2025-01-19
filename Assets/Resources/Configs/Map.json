@@ -1,156 +1,273 @@
 {
-  "nodes": [
-    { "id": 1, "type": "barracks", "x": 0, "y": 4 },
-    { "id": 2, "type": "barracks", "x": 1, "y": 3 },
-    { "id": 3, "type": "treasure", "x": 1, "y": 5 },
-    { "id": 4, "type": "barracks", "x": 2, "y": 2 },
-    { "id": 5, "type": "treasure", "x": 2, "y": 4 },
-    { "id": 6, "type": "barracks", "x": 2, "y": 6 },
-    { "id": 7, "type": "barracks", "x": 3, "y": 1 },
-    { "id": 8, "type": "treasure", "x": 3, "y": 2 },
-    { "id": 9, "type": "treasure", "x": 3, "y": 4 },
-    { "id": 10, "type": "treasure", "x": 3, "y": 6 },
-    { "id": 11, "type": "treasure", "x": 3, "y": 7 },
-    { "id": 12, "type": "treasure", "x": 4, "y": 3 },
-    { "id": 13, "type": "barracks", "x": 4, "y": 5 },
-    { "id": 14, "type": "end", "x": 5, "y": 4 }
-  ],
-  "edges": [
-    { 
-      "from": 1, 
-      "to": 2, 
-      "squad": [
-        { "unit": "Goblin", "placement": 2 }
+  "maps": [
+    {
+      "name": "FieldMap",
+      "background": "FieldBackground",
+      "arena": "FieldArena",
+      "nextMaps": ["DesertMap", "ForestMap"],
+      "nodes": [
+        { "id": 1, "type": "barracks", "x": 0, "y": 4 },
+        { "id": 2, "type": "barracks", "x": 1, "y": 3 },
+        { "id": 3, "type": "treasure", "x": 1, "y": 5 },
+        { "id": 4, "type": "barracks", "x": 2, "y": 2 },
+        { "id": 5, "type": "treasure", "x": 2, "y": 4 },
+        { "id": 6, "type": "barracks", "x": 2, "y": 6 },
+        { "id": 7, "type": "barracks", "x": 3, "y": 1 },
+        { "id": 8, "type": "treasure", "x": 3, "y": 2 },
+        { "id": 9, "type": "treasure", "x": 3, "y": 4 },
+        { "id": 10, "type": "treasure", "x": 3, "y": 6 },
+        { "id": 11, "type": "treasure", "x": 3, "y": 7 },
+        { "id": 12, "type": "treasure", "x": 4, "y": 3 },
+        { "id": 13, "type": "barracks", "x": 4, "y": 5 },
+        { "id": 14, "type": "end", "x": 5, "y": 4 }
+      ],
+      "edges": [
+        { 
+          "from": 1, 
+          "to": 2, 
+          "squad": [
+            { "unit": "Goblin", "placement": 2 }
+          ]
+        },
+        { 
+          "from": 1, 
+          "to": 3, 
+          "squad": [
+            { "unit": "Goblin", "placement": 2 }
+          ]
+        },
+        { 
+          "from": 2, 
+          "to": 4, 
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 3 }
+          ]
+        },
+        { 
+          "from": 2, 
+          "to": 5, 
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 3 }
+          ]
+        },
+        { 
+          "from": 3, 
+          "to": 6, 
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 3 }
+          ]
+        },
+        { 
+          "from": 4, 
+          "to": 7, 
+          "squad": [
+            { "unit": "Ork", "placement": 2 },
+            { "unit": "Goblin", "placement": 5 }
+          ]
+        },
+        { 
+          "from": 4, 
+          "to": 8, 
+          "squad": [
+            { "unit": "Ork", "placement": 2 }
+          ]
+        },
+        { 
+          "from": 5, 
+          "to": 9, 
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 }
+          ]
+        },
+        { 
+          "from": 6, 
+          "to": 10, 
+          "squad": [
+            { "unit": "Ork", "placement": 2 },
+            { "unit": "Goblin", "placement": 5 }
+          ]
+        },
+        { 
+          "from": 6, 
+          "to": 11, 
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 }
+          ]
+        },
+        { 
+          "from": 7, 
+          "to": 12, 
+          "squad": [
+            { "unit": "HeavyOrk", "placement": 2 }
+          ]
+        },
+        { 
+          "from": 8, 
+          "to": 12, 
+          "squad": [
+            { "unit": "Ork", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 }
+          ]
+        },
+        { 
+          "from": 9, 
+          "to": 12, 
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 },
+            { "unit": "Goblin", "placement": 5 }
+          ]
+        },
+        { 
+          "from": 10, 
+          "to": 13, 
+          "squad": [
+            { "unit": "HeavyOrk", "placement": 2 }
+          ]
+        },
+        { 
+          "from": 11, 
+          "to": 13, 
+          "squad": [
+            { "unit": "Ork", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 }
+          ]
+        },
+        { 
+          "from": 12, 
+          "to": 14, 
+          "squad": [
+            { "unit": "OrkShaman", "placement": 6 }
+          ]
+        },
+        { 
+          "from": 13, 
+          "to": 14, 
+          "squad": [
+            { "unit": "Ogre", "placement": 4 }
+          ]
+        }
       ]
     },
-    { 
-      "from": 1, 
-      "to": 3, 
-      "squad": [
-        { "unit": "Goblin", "placement": 2 }
+    {
+      "name": "DesertMap",
+      "background": "DesertBackground",
+      "arena": "DesertArena",
+      "nextMaps": ["SwampMap"],
+      "nodes": [
+        { "id": 1, "type": "barracks", "x": 0, "y": 0 },
+        { "id": 2, "type": "treasure", "x": 1, "y": 0 },
+        { "id": 3, "type": "end", "x": 2, "y": 0 }
+      ],
+      "edges": [
+        {
+          "from": 1,
+          "to": 2,
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 },
+            { "unit": "Goblin", "placement": 4 },
+            { "unit": "Goblin", "placement": 5 },
+            { "unit": "Goblin", "placement": 6 }
+          ]
+        },
+        {
+          "from": 2,
+          "to": 3,
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 },
+            { "unit": "Goblin", "placement": 4 },
+            { "unit": "Goblin", "placement": 5 },
+            { "unit": "Goblin", "placement": 6 }
+          ]
+        }
       ]
     },
-    { 
-      "from": 2, 
-      "to": 4, 
-      "squad": [
-        { "unit": "Goblin", "placement": 1 },
-        { "unit": "Goblin", "placement": 3 }
+    {
+      "name": "ForestMap",
+      "background": "ForestBackground",
+      "arena": "ForestArena",
+      "nextMaps": ["SwampMap"],
+      "nodes": [
+        { "id": 1, "type": "barracks", "x": 0, "y": 0 },
+        { "id": 2, "type": "treasure", "x": 1, "y": 0 },
+        { "id": 3, "type": "end", "x": 2, "y": 0 }
+      ],
+      "edges": [
+        {
+          "from": 1,
+          "to": 2,
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 },
+            { "unit": "Goblin", "placement": 4 },
+            { "unit": "Goblin", "placement": 5 },
+            { "unit": "Goblin", "placement": 6 }
+          ]
+        },
+        {
+          "from": 2,
+          "to": 3,
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 },
+            { "unit": "Goblin", "placement": 4 },
+            { "unit": "Goblin", "placement": 5 },
+            { "unit": "Goblin", "placement": 6 }
+          ]
+        }
       ]
     },
-    { 
-      "from": 2, 
-      "to": 5, 
-      "squad": [
-        { "unit": "Goblin", "placement": 1 },
-        { "unit": "Goblin", "placement": 3 }
-      ]
-    },
-    { 
-      "from": 3, 
-      "to": 6, 
-      "squad": [
-        { "unit": "Goblin", "placement": 1 },
-        { "unit": "Goblin", "placement": 3 }
-      ]
-    },
-    { 
-      "from": 4, 
-      "to": 7, 
-      "squad": [
-        { "unit": "Ork", "placement": 2 },
-        { "unit": "Goblin", "placement": 5 }
-        
-      ]
-    },
-    { 
-      "from": 4, 
-      "to": 8, 
-      "squad": [
-        { "unit": "Ork", "placement": 2 }
-      ]
-    },
-    { 
-      "from": 5, 
-      "to": 9, 
-      "squad": [
-        { "unit": "Goblin", "placement": 1 },
-        { "unit": "Goblin", "placement": 2 },
-        { "unit": "Goblin", "placement": 3 }
-      ]
-    },
-    { 
-      "from": 6, 
-      "to": 10, 
-      "squad": [
-        { "unit": "Ork", "placement": 2 },
-        { "unit": "Goblin", "placement": 5 }
-        
-      ]
-    },
-    { 
-      "from": 6, 
-      "to": 11, 
-      "squad": [
-        { "unit": "Goblin", "placement": 1 },
-        { "unit": "Goblin", "placement": 2 },
-        { "unit": "Goblin", "placement": 3 }
-      ]
-    },
-    { 
-      "from": 7, 
-      "to": 12, 
-      "squad": [
-        { "unit": "HeavyOrk", "placement": 2 }
-      ]
-    },
-    { 
-      "from": 8, 
-      "to": 12, 
-      "squad": [
-        { "unit": "Ork", "placement": 1 },
-        { "unit": "Goblin", "placement": 2 },
-        { "unit": "Goblin", "placement": 3 }
-      ]
-    },
-    { 
-      "from": 9, 
-      "to": 12, 
-      "squad": [
-        { "unit": "Goblin", "placement": 1 },
-        { "unit": "Goblin", "placement": 2 },
-        { "unit": "Goblin", "placement": 3 },
-        { "unit": "Goblin", "placement": 5 }
-      ]
-    },
-    { 
-      "from": 10, 
-      "to": 13, 
-      "squad": [
-        { "unit": "HeavyOrk", "placement": 2 }
-      ]
-    },
-    { 
-      "from": 11, 
-      "to": 13, 
-      "squad": [
-        { "unit": "Ork", "placement": 1 },
-        { "unit": "Goblin", "placement": 2 },
-        { "unit": "Goblin", "placement": 3 }
-      ]
-    },
-    { 
-      "from": 12, 
-      "to": 14, 
-      "squad": [
-        { "unit": "OrkShaman", "placement": 6 }
-      ]
-    },
-    { 
-      "from": 13, 
-      "to": 14, 
-      "squad": [
-        { "unit": "Ogre", "placement": 4 }
+    {
+      "name": "SwampMap",
+      "background": "SwampBackground",
+      "arena": "SwampArena",
+      "nextMaps": [],
+      "nodes": [
+        { "id": 1, "type": "barracks", "x": 0, "y": 0 },
+        { "id": 2, "type": "treasure", "x": 1, "y": 0 },
+        { "id": 3, "type": "end", "x": 2, "y": 0 }
+      ],
+      "edges": [
+        {
+          "from": 1,
+          "to": 2,
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 },
+            { "unit": "Goblin", "placement": 4 },
+            { "unit": "Goblin", "placement": 5 },
+            { "unit": "Goblin", "placement": 6 }
+          ]
+        },
+        {
+          "from": 2,
+          "to": 3,
+          "squad": [
+            { "unit": "Goblin", "placement": 1 },
+            { "unit": "Goblin", "placement": 2 },
+            { "unit": "Goblin", "placement": 3 },
+            { "unit": "Goblin", "placement": 4 },
+            { "unit": "Goblin", "placement": 5 },
+            { "unit": "Goblin", "placement": 6 }
+          ]
+        }
       ]
     }
   ]

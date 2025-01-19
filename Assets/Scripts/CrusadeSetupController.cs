@@ -56,6 +56,8 @@ public class CrusadeSetupController : MonoBehaviour
             // Reset game state before starting new game
             GameManager.Instance.ResetGame();
             
+            GameManager.Instance.SetCurrentMap("FieldMap");
+
             // Set up new game
             GameManager.Instance.SetSelectedCharacter(selectedOption);
             GameManager.Instance.SetCurrentNode(1);

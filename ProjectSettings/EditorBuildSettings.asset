@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SquadDetailsScene.unity
     guid: 01fed22711478354199cbbc239018fb1
+  - enabled: 1
+    path: Assets/Scenes/ChooseNextMapScene.unity
+    guid: af30abeee02b93945b5c1b5071d3f1e1
   m_configObjects:
     com.unity.adaptiveperformance.google.android.provider_settings: {fileID: 11400000, guid: d9e2c5adb1a02e64bbf1ae1753feda13, type: 2}
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 12d17dc1f3be20740a8249320e6d1ad2, type: 2}

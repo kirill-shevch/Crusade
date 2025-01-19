@@ -542,7 +542,26 @@ public class BattleSceneManager : MonoBehaviour
     {
         int targetNodeId = PlayerPrefs.GetInt("TargetNode", 1);
 
-        if (GameManager.Instance.VisitedNodes.Contains(targetNodeId))
+        // Load map config and find current map
+        var mapConfig = JsonUtility.FromJson<MapConfig>(Resources.Load<TextAsset>("Configs/Map").text);
+        var currentMap = mapConfig.maps.First(m => m.name == GameManager.Instance.CurrentMap);
+
+        // Find target node
+        var targetNode = currentMap.nodes.First(n => n.id == targetNodeId);
+
+        if (targetNode.type == "end")
+        {
+            // Check if map has next maps
+            if (currentMap.nextMaps != null && currentMap.nextMaps.Length > 0)
+            {
+                SceneManager.LoadScene("ChooseNextMapScene");
+            }
+            else
+            {
+                SceneManager.LoadScene("RewardsScene");
+            }
+        }
+        else if (GameManager.Instance.VisitedNodes.Contains(targetNodeId))
         {
             GameManager.Instance.SetCurrentNode(targetNodeId);
             SceneController.Instance.LoadMap();

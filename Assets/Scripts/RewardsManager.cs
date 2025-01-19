@@ -126,6 +126,7 @@ public class RewardsManager : MonoBehaviour
         string nodeType = PlayerPrefs.GetString("CurrentNodeType");
         if (nodeType == "end")
         {
+            GameManager.Instance.ResetGame();
             SceneController.Instance.LoadMainMenu();
         }
         else

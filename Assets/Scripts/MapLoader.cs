@@ -22,6 +22,7 @@ public class MapLoader : MonoBehaviour
     private bool isMoving = false;
     private MapConfig mapConfig;
     private Dictionary<int, NodeController> nodeControllers = new Dictionary<int, NodeController>();
+    private Map currentMap;
 
     void Start()
     {
@@ -35,19 +36,29 @@ public class MapLoader : MonoBehaviour
     void LoadMapConfig()
     {
         TextAsset json = Resources.Load<TextAsset>("Configs/Map");
-        mapConfig = JsonUtility.FromJson<MapConfig>(json.text);
+        MapConfig allMaps = JsonUtility.FromJson<MapConfig>(json.text);
+        
+        // Find the current map configuration
+        string mapName = GameManager.Instance.CurrentMap;
+        currentMap = System.Array.Find(allMaps.maps, map => map.name == mapName);
+        
+        if (currentMap == null)
+        {
+            Debug.LogError($"Could not find map configuration for {mapName}");
+            return;
+        }
     }
 
     void CreateMap()
     {
         // Create all nodes first
-        foreach (Node node in mapConfig.nodes)
+        foreach (Node node in currentMap.nodes)
         {
             CreateNode(node);
         }
 
         // Then create all edges
-        foreach (Edge edge in mapConfig.edges)
+        foreach (Edge edge in currentMap.edges)
         {
             CreateEdge(edge);
         }
@@ -273,7 +284,7 @@ public class MapLoader : MonoBehaviour
 
     public string GetNodeTypeById(int id)
     {
-        foreach (Node node in mapConfig.nodes)
+        foreach (Node node in currentMap.nodes)
         {
             if (node.id == id)
             {
@@ -285,7 +296,7 @@ public class MapLoader : MonoBehaviour
 
     public Edge GetEdge(int from, int to)
     {
-        foreach (Edge edge in mapConfig.edges)
+        foreach (Edge edge in currentMap.edges)
         {
             if ((edge.from == from && edge.to == to) || (edge.from == to && edge.to == from))
             {
