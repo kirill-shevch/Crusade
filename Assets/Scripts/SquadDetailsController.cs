@@ -148,9 +148,17 @@ public class SquadDetailsController : MonoBehaviour
             // Only show buffs for the hero character
             if (unit.unit == selectedCharacter)
             {
+                // Get both regular and permanent buffs
                 string buffs = PlayerPrefs.GetString("PlayerBuffs", "");
-                List<string> playerBuffs = new List<string>(buffs.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
-                buffsText = playerBuffs.Count > 0 ? string.Join("\n", playerBuffs.Select(buff => $"- {buff}")) : "No buffs";
+                string permanentBuffs = PlayerPrefs.GetString("PermanentBuffs", "");
+                
+                // Combine both buff lists
+                List<string> allBuffs = new List<string>();
+                allBuffs.AddRange(buffs.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
+                allBuffs.AddRange(permanentBuffs.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
+                
+                // Format the buffs text
+                buffsText = allBuffs.Count > 0 ? string.Join("\n", allBuffs.Select(buff => $"- {buff}")) : "No buffs";
             }
 
             unitDetailsText.text = $"Name: {unit.unit}\nHealth: {unit.health}\nArmor: {unit.armor}\n" +

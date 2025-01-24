@@ -7,6 +7,7 @@ public class Node
     public string type;
     public float x;
     public float y;
+    public string rewardsText;
 }
 
 [System.Serializable]
@@ -63,6 +64,7 @@ public class Map
     public string[] nextMaps;
     public Node[] nodes;
     public Edge[] edges;
+    public string finalReward;
 }
 
 [System.Serializable]

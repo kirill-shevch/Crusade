@@ -7,6 +7,7 @@ using System.Linq;
 
 public class RewardsManager : MonoBehaviour
 {
+    public TextMeshProUGUI nodeText;
     public TextMeshProUGUI rewardsText;
     public Button okayButton;
 
@@ -33,6 +34,15 @@ public class RewardsManager : MonoBehaviour
     void HandleRewards()
     {
         string nodeType = PlayerPrefs.GetString("CurrentNodeType");
+        
+        // Load current map config to get node text
+        TextAsset json = Resources.Load<TextAsset>("Configs/Map");
+        MapConfig allMaps = JsonUtility.FromJson<MapConfig>(json.text);
+        Map currentMap = System.Array.Find(allMaps.maps, map => map.name == GameManager.Instance.CurrentMap);
+        Node currentNode = System.Array.Find(currentMap.nodes, node => node.id == GameManager.Instance.CurrentNodeId);
+        
+        // Set node description text
+        nodeText.text = currentNode.rewardsText;
         string rewardsInfo = "";
 
         switch (nodeType)
@@ -44,7 +54,7 @@ public class RewardsManager : MonoBehaviour
                 rewardsInfo = HandleTreasureRewards();
                 break;
             case "end":
-                rewardsInfo = "Congratulations! You have completed the game!";
+                rewardsInfo = HandleEndNodeRewards(currentMap.finalReward);
                 break;
         }
 
@@ -121,16 +131,42 @@ public class RewardsManager : MonoBehaviour
         return $"You have received a new buff: {newBuff}";
     }
 
+    string HandleEndNodeRewards(string finalReward)
+    {
+        // Save the permanent buff
+        string permanentBuffs = PlayerPrefs.GetString("PermanentBuffs", "");
+        permanentBuffs += finalReward + ",";
+        PlayerPrefs.SetString("PermanentBuffs", permanentBuffs);
+        PlayerPrefs.Save();
+        
+        return "Congratulations! You have completed the map!";
+    }
+
     void OnOkayButtonClicked()
     {
         string nodeType = PlayerPrefs.GetString("CurrentNodeType");
+        
         if (nodeType == "end")
         {
-            GameManager.Instance.ResetGame();
-            SceneController.Instance.LoadMainMenu();
+            // Load map config to check if there are next maps
+            TextAsset json = Resources.Load<TextAsset>("Configs/Map");
+            MapConfig allMaps = JsonUtility.FromJson<MapConfig>(json.text);
+            Map currentMap = System.Array.Find(allMaps.maps, map => map.name == GameManager.Instance.CurrentMap);
+            
+            if (currentMap.nextMaps != null && currentMap.nextMaps.Length > 0)
+            {
+                // If there are next maps available, go to the choose map scene
+                SceneManager.LoadScene("ChooseNextMapScene");
+            }
+            else
+            {
+                GameManager.Instance.ResetGame();
+                SceneManager.LoadScene("MainMenuScene");
+            }
         }
         else
         {
+            // For non-end nodes, return to map
             SceneController.Instance.LoadMap();
         }
     }

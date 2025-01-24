@@ -4,22 +4,23 @@
       "name": "FieldMap",
       "background": "FieldBackground",
       "arena": "FieldArena",
+      "finalReward": "BullHeart",
       "nextMaps": ["DesertMap", "ForestMap"],
       "nodes": [
-        { "id": 1, "type": "barracks", "x": 0, "y": 4 },
-        { "id": 2, "type": "barracks", "x": 1, "y": 3 },
-        { "id": 3, "type": "treasure", "x": 1, "y": 5 },
-        { "id": 4, "type": "barracks", "x": 2, "y": 2 },
-        { "id": 5, "type": "treasure", "x": 2, "y": 4 },
-        { "id": 6, "type": "barracks", "x": 2, "y": 6 },
-        { "id": 7, "type": "barracks", "x": 3, "y": 1 },
-        { "id": 8, "type": "treasure", "x": 3, "y": 2 },
-        { "id": 9, "type": "treasure", "x": 3, "y": 4 },
-        { "id": 10, "type": "treasure", "x": 3, "y": 6 },
-        { "id": 11, "type": "treasure", "x": 3, "y": 7 },
-        { "id": 12, "type": "treasure", "x": 4, "y": 3 },
-        { "id": 13, "type": "barracks", "x": 4, "y": 5 },
-        { "id": 14, "type": "end", "x": 5, "y": 4 }
+        { "id": 1, "type": "barracks", "x": 0, "y": 4, "rewardsText": "New member joined to your squad" },
+        { "id": 2, "type": "barracks", "x": 1, "y": 3, "rewardsText": "New member joined to your squad" },
+        { "id": 3, "type": "treasure", "x": 1, "y": 5, "rewardsText": "Your hero become stronger" },
+        { "id": 4, "type": "barracks", "x": 2, "y": 2, "rewardsText": "New member joined to your squad" },
+        { "id": 5, "type": "treasure", "x": 2, "y": 4, "rewardsText": "Your hero become stronger" },
+        { "id": 6, "type": "barracks", "x": 2, "y": 6, "rewardsText": "New member joined to your squad" },
+        { "id": 7, "type": "barracks", "x": 3, "y": 1, "rewardsText": "New member joined to your squad" },
+        { "id": 8, "type": "treasure", "x": 3, "y": 2, "rewardsText": "Your hero become stronger" },
+        { "id": 9, "type": "treasure", "x": 3, "y": 4, "rewardsText": "Your hero become stronger" },
+        { "id": 10, "type": "treasure", "x": 3, "y": 6, "rewardsText": "Your hero become stronger" },
+        { "id": 11, "type": "treasure", "x": 3, "y": 7, "rewardsText": "Your hero become stronger" },
+        { "id": 12, "type": "treasure", "x": 4, "y": 3, "rewardsText": "Your hero become stronger" },
+        { "id": 13, "type": "barracks", "x": 4, "y": 5, "rewardsText": "New member joined to your squad" },
+        { "id": 14, "type": "end", "x": 5, "y": 4, "rewardsText": "In the treasure of the greenskins boss you found the source of his power! The heart of the bull! It is yourth now" }
       ],
       "edges": [
         { 
@@ -163,11 +164,12 @@
       "name": "DesertMap",
       "background": "DesertBackground",
       "arena": "DesertArena",
+      "finalReward": "OrbOfSpeed",
       "nextMaps": ["SwampMap"],
       "nodes": [
-        { "id": 1, "type": "barracks", "x": 0, "y": 0 },
-        { "id": 2, "type": "treasure", "x": 1, "y": 0 },
-        { "id": 3, "type": "end", "x": 2, "y": 0 }
+        { "id": 1, "type": "barracks", "x": 0, "y": 0, "rewardsText": "New member joined to your squad" },
+        { "id": 2, "type": "treasure", "x": 1, "y": 0, "rewardsText": "Your hero become stronger" },
+        { "id": 3, "type": "end", "x": 2, "y": 0, "rewardsText": "Orb of speed is yourth now" }
       ],
       "edges": [
         {
@@ -200,11 +202,12 @@
       "name": "ForestMap",
       "background": "ForestBackground",
       "arena": "ForestArena",
+      "finalReward": "MagicPotion",
       "nextMaps": ["SwampMap"],
       "nodes": [
-        { "id": 1, "type": "barracks", "x": 0, "y": 0 },
-        { "id": 2, "type": "treasure", "x": 1, "y": 0 },
-        { "id": 3, "type": "end", "x": 2, "y": 0 }
+        { "id": 1, "type": "barracks", "x": 0, "y": 0, "rewardsText": "New member joined to your squad" },
+        { "id": 2, "type": "treasure", "x": 1, "y": 0, "rewardsText": "Your hero become stronger" },
+        { "id": 3, "type": "end", "x": 2, "y": 0, "rewardsText": "Magic potion is yourth now" }
       ],
       "edges": [
         {
@@ -237,11 +240,12 @@
       "name": "SwampMap",
       "background": "SwampBackground",
       "arena": "SwampArena",
+      "finalReward": "InnerFire",
       "nextMaps": [],
       "nodes": [
-        { "id": 1, "type": "barracks", "x": 0, "y": 0 },
-        { "id": 2, "type": "treasure", "x": 1, "y": 0 },
-        { "id": 3, "type": "end", "x": 2, "y": 0 }
+        { "id": 1, "type": "barracks", "x": 0, "y": 0, "rewardsText": "New member joined to your squad" },
+        { "id": 2, "type": "treasure", "x": 1, "y": 0, "rewardsText": "Your hero become stronger" },
+        { "id": 3, "type": "end", "x": 2, "y": 0, "rewardsText": "You received the old forgoten fire and now your crusade is over" }
       ],
       "edges": [
         {
