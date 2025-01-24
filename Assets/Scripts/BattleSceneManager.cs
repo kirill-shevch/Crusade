@@ -584,16 +584,6 @@ public class BattleSceneManager : MonoBehaviour
             targetObject.transform.position = Vector3.Lerp(originalPosition, knockbackPosition, t);
             yield return null;
         }
-        
-        // Move back to original position
-        elapsedTime = 0;
-        while (elapsedTime < knockbackDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / knockbackDuration;
-            targetObject.transform.position = Vector3.Lerp(knockbackPosition, originalPosition, t);
-            yield return null;
-        }
 
         // Deal damage
         float damage = Random.Range(attackerData.minimumAttackDamage, attackerData.maximumAttackDamage) - targetData.armor;
