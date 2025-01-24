@@ -229,14 +229,23 @@ public class BattleSceneManager : MonoBehaviour
                     Image buttonImage = abilityButton.AddComponent<Image>();
                     buttonImage.sprite = Resources.Load<Sprite>($"Images/{ability.buttonImage}");
                     RectTransform rectTransform = abilityButton.GetComponent<RectTransform>();
-                    rectTransform.sizeDelta = new Vector2(150, 150); // Adjust size as needed
+                    rectTransform.sizeDelta = new Vector2(225, 225); // 1.5 times bigger (was 150)
+    
+                    // Set up button colors for disabled state
+                    ColorBlock colors = button.colors;
+                    colors.normalColor = Color.white;
+                    colors.highlightedColor = new Color(0.9f, 0.9f, 0.9f);
+                    colors.pressedColor = new Color(0.8f, 0.8f, 0.8f);
+                    colors.disabledColor = new Color(0.1f, 0.1f, 0.1f, 1f); // Even darker when disabled
+                    colors.selectedColor = Color.white;
+                    button.colors = colors;
     
                     // Set parent
                     abilityButton.transform.SetParent(panel.transform, false);
     
                     // Position buttons (example positioning)
                     int buttonCount = instantiatedButtons.Count;
-                    float totalWidth = buttonCount * 160; // 100 width + 10 spacing
+                    float totalWidth = buttonCount * 240; // Adjusted spacing for larger buttons
                     rectTransform.anchoredPosition = new Vector2(0, 450 + totalWidth);
                     instantiatedButtons.Add(rectTransform);
     
@@ -261,8 +270,17 @@ public class BattleSceneManager : MonoBehaviour
     // Shieldbash Ability
     private void ShieldBash(Unit caster, GameObject casterGameObject, Button abilityButton)
     {
-        // Disable the button
+        StartCoroutine(ShieldBashCoroutine(caster, casterGameObject, abilityButton));
+    }
+
+    private IEnumerator ShieldBashCoroutine(Unit caster, GameObject casterGameObject, Button abilityButton)
+    {
+        // Disable the button and darken it
         abilityButton.interactable = false;
+        abilityButton.GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f, 1f);
+
+        // Wait for 0.5 seconds
+        yield return new WaitForSeconds(0.5f);
 
         // Show EffectImage on caster
         StartCoroutine(ShowEffectImage(casterGameObject, "shieldbasheffect", 1f));
@@ -283,7 +301,7 @@ public class BattleSceneManager : MonoBehaviour
             }
         }
 
-        // Deal 25 damage and push back
+        // Deal 25 damage, push back and slow
         foreach (var target in targets)
         {
             Unit targetData = target.GetComponent<UnitBehavior>().unit;
@@ -295,8 +313,13 @@ public class BattleSceneManager : MonoBehaviour
             
             // Push back by teleporting
             Vector2 pushDirection = (target.transform.position - casterGameObject.transform.position).normalized;
-            float pushDistance = 3f; // Constant distance to push back
+            float pushDistance = 3f;
             target.transform.position += (Vector3)(pushDirection * pushDistance);
+
+            // Apply slow effect
+            float originalSpeed = targetData.moveSpeed;
+            targetData.moveSpeed /= 2f; // Slow by half
+            StartCoroutine(RevertSlow(targetData, originalSpeed, 0.5f));
 
             if (targetData.health <= 0)
             {
@@ -310,12 +333,22 @@ public class BattleSceneManager : MonoBehaviour
     // Rapidfire Ability
     private void RapidFire(Unit caster, GameObject casterGameObject, Button abilityButton)
     {
+        StartCoroutine(RapidFireCoroutine(caster, casterGameObject, abilityButton));
+    }
+
+    private IEnumerator RapidFireCoroutine(Unit caster, GameObject casterGameObject, Button abilityButton)
+    {
         Debug.Log("Rapidfire");
-        // Disable the button
+        // Disable the button and darken it
         abilityButton.interactable = false;
+        abilityButton.GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f, 1f);
+
+        // Wait for 0.5 seconds
+        yield return new WaitForSeconds(0.5f);
 
         // Show EffectImage on caster
         StartCoroutine(ShowEffectImage(casterGameObject, "rapidfireeffect", 3f));
+        
         // Increase attack speed
         UnitBehavior behavior = casterGameObject.GetComponent<UnitBehavior>();
         behavior.unit.attackSpeed -= 0.9f;
@@ -333,8 +366,17 @@ public class BattleSceneManager : MonoBehaviour
     // Thunderstorm Ability
     private void Thunderstorm(Unit caster, Button abilityButton)
     {
-        // Disable the button
+        StartCoroutine(ThunderstormCoroutine(caster, abilityButton));
+    }
+
+    private IEnumerator ThunderstormCoroutine(Unit caster, Button abilityButton)
+    {
+        // Disable the button and darken it
         abilityButton.interactable = false;
+        abilityButton.GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f, 1f);
+
+        // Wait for 0.5 seconds
+        yield return new WaitForSeconds(0.5f);
 
         // Find all enemy units
         List<GameObject> enemies = enemyUnits.Values.Where(u => u.activeSelf).ToList();
@@ -349,6 +391,11 @@ public class BattleSceneManager : MonoBehaviour
             float oldHealth = targetData.health;
             targetData.health -= 45;
             unitHPTexts[enemy].text = targetData.health.ToString();
+
+            // Apply slow effect
+            float originalSpeed = targetData.moveSpeed;
+            targetData.moveSpeed /= 2f; // Slow by half
+            StartCoroutine(RevertSlow(targetData, originalSpeed, 0.5f));
 
             Debug.Log($"{caster.unit} used Thunderstorm on {targetData.unit}, dealing 45 damage.");
 
@@ -369,9 +416,9 @@ public class BattleSceneManager : MonoBehaviour
         SpriteRenderer renderer = effect.AddComponent<SpriteRenderer>();
         renderer.sprite = Resources.Load<Sprite>($"Images/{effectImageName}");
         renderer.sortingOrder = 2; // Ensure it's on top
-        effect.transform.localPosition = Vector3.zero;// Using localPosition since it's now parented
-        effect.transform.localScale = new Vector3(10f, 10f, 10f);
-        renderer.color = new Color(1f, 1f, 1f, 0.5f); // Half transparent
+        effect.transform.localPosition = Vector3.zero;
+        effect.transform.localScale = new Vector3(20f, 20f, 20f); // Twice as big (was 10f)
+        renderer.color = new Color(1f, 1f, 1f, 0.75f); // Less transparent (was 0.5f)
 
         yield return new WaitForSeconds(duration);
 
@@ -394,13 +441,16 @@ public class BattleSceneManager : MonoBehaviour
     void ApplyBuffs(Unit[] squad)
     {
         string buffs = PlayerPrefs.GetString("PlayerBuffs", "");
+        string permanentBuffs = PlayerPrefs.GetString("PermanentBuffs", "");
         List<string> playerBuffs = new List<string>(buffs.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
+        List<string> allPermanentBuffs = new List<string>(permanentBuffs.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
         string selectedCharacter = PlayerPrefs.GetString("SelectedCharacter", "Knight");
 
         foreach (Unit unit in squad)
         {
             if (unit.unit == selectedCharacter)
             {
+                // Apply regular buffs
                 foreach (string buff in playerBuffs)
                 {
                     if (buff == "Damage")
@@ -411,6 +461,25 @@ public class BattleSceneManager : MonoBehaviour
                     else if (buff == "Armor")
                     {
                         unit.armor += 3;
+                    }
+                }
+
+                // Apply permanent buffs
+                foreach (string buff in allPermanentBuffs)
+                {
+                    switch (buff)
+                    {
+                        case "BullHeart":
+                            unit.health += 15;
+                            break;
+                        case "OrbOfSpeed":
+                            unit.attackSpeed -= 0.2f;
+                            break;
+                        case "MagicPotion":
+                            unit.minimumAttackDamage += 3;
+                            unit.maximumAttackDamage += 3;
+                            unit.health += 5;
+                            break;
                     }
                 }
             }
@@ -485,7 +554,7 @@ public class BattleSceneManager : MonoBehaviour
 
     IEnumerator ProjectileMovement(GameObject projectile, GameObject targetObject, Unit attackerData, Unit targetData)
     {
-        float speed = 10f; // Adjust the projectile speed as needed
+        float speed = 10f;
         Vector3 startPosition = projectile.transform.position;
         Vector3 targetPosition = targetObject.transform.position;
 
@@ -497,6 +566,34 @@ public class BattleSceneManager : MonoBehaviour
 
         // Ensure the projectile reaches the target
         projectile.transform.position = targetPosition;
+
+        // Calculate impact direction and apply small knockback
+        Vector2 impactDirection = (targetObject.transform.position - startPosition).normalized;
+        float knockbackDistance = 0.2f; // Small knockback distance
+        Vector3 knockbackPosition = targetObject.transform.position + (Vector3)(impactDirection * knockbackDistance);
+        
+        // Quick knockback movement
+        float knockbackDuration = 0.1f;
+        float elapsedTime = 0;
+        Vector3 originalPosition = targetObject.transform.position;
+        
+        while (elapsedTime < knockbackDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / knockbackDuration;
+            targetObject.transform.position = Vector3.Lerp(originalPosition, knockbackPosition, t);
+            yield return null;
+        }
+        
+        // Move back to original position
+        elapsedTime = 0;
+        while (elapsedTime < knockbackDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / knockbackDuration;
+            targetObject.transform.position = Vector3.Lerp(knockbackPosition, originalPosition, t);
+            yield return null;
+        }
 
         // Deal damage
         float damage = Random.Range(attackerData.minimumAttackDamage, attackerData.maximumAttackDamage) - targetData.armor;
@@ -517,6 +614,12 @@ public class BattleSceneManager : MonoBehaviour
         Destroy(projectile);
     }
 
+    // Helper method to revert slow effect
+    private IEnumerator RevertSlow(Unit unit, float originalSpeed, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        unit.moveSpeed = originalSpeed;
+    }
 
     public void OnUnitDeath(GameObject unitObject)
     {

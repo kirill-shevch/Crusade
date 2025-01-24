@@ -7,9 +7,9 @@ public class ChooseNextMapController : MonoBehaviour
 {
     public GameObject mapPanel;
     
-    private const float BUTTON_WIDTH = 200f;
-    private const float BUTTON_HEIGHT = 50f;
-    private const float HORIZONTAL_SPACING = 20f; // Space between buttons
+    private const float BUTTON_WIDTH = 600f;
+    private const float BUTTON_HEIGHT = 150f;
+    private const float HORIZONTAL_SPACING = 40f; // Space between buttons
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -73,7 +73,7 @@ public class ChooseNextMapController : MonoBehaviour
         buttonText.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
         buttonText.alignment = TextAlignmentOptions.Center;
         buttonText.color = Color.white;
-        buttonText.fontSize = 24;
+        buttonText.fontSize = 72;
 
         // Set text RectTransform
         RectTransform textRectTransform = textObj.GetComponent<RectTransform>();
