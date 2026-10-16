@@ -40,25 +40,8 @@ public class SquadDetailsController : MonoBehaviour
 
     void FulfillUnitDetails(Unit[] squad)
     {
-        TextAsset unitConfig = Resources.Load<TextAsset>("Configs/Units");
-        UnitArrayWrapper config = JsonUtility.FromJson<UnitArrayWrapper>(unitConfig.text);
-
-        foreach (Unit unit in squad)
-        {
-            Unit detailedUnit = config.units.FirstOrDefault(u => u.unit == unit.unit);
-            if (detailedUnit != null)
-            {
-                unit.level = detailedUnit.level;
-                unit.description = detailedUnit.description;
-                unit.health = detailedUnit.health;
-                unit.armor = detailedUnit.armor;
-                unit.moveSpeed = detailedUnit.moveSpeed;
-                unit.minimumAttackDamage = detailedUnit.minimumAttackDamage;
-                unit.maximumAttackDamage = detailedUnit.maximumAttackDamage;
-                unit.attackSpeed = detailedUnit.attackSpeed;
-                unit.attackRange = detailedUnit.attackRange;
-            }
-        }
+        var fresh = GameContent.Units.CreateFreshSquad(squad);
+        System.Array.Copy(fresh, squad, fresh.Length);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -90,12 +73,12 @@ public class SquadDetailsController : MonoBehaviour
 
     void LoadSquadDetails()
     {
-        string squadJson = PlayerPrefs.GetString("DetailsSquad", "{}");
+        string squadJson = JsonUtility.ToJson(GameManager.Instance.DetailsSquad);
         UnitArrayWrapper squadWrapper = JsonUtility.FromJson<UnitArrayWrapper>(squadJson);
 
         FulfillUnitDetails(squadWrapper.units);
 
-        isPlayerSquad = PlayerPrefs.GetInt("isPlayerSquad", 0) == 1;
+        isPlayerSquad = GameManager.Instance.DetailsIsPlayer;
 
         foreach (Unit unit in squadWrapper.units)
         {
@@ -143,14 +126,14 @@ public class SquadDetailsController : MonoBehaviour
 
             // Show unit details
             string buffsText = "";
-            string selectedCharacter = PlayerPrefs.GetString("SelectedCharacter", "Knight");
+            string selectedCharacter = GameManager.Instance.SelectedCharacter;
             
             // Only show buffs for the hero character
             if (unit.unit == selectedCharacter)
             {
                 // Get both regular and permanent buffs
-                string buffs = PlayerPrefs.GetString("PlayerBuffs", "");
-                string permanentBuffs = PlayerPrefs.GetString("PermanentBuffs", "");
+                string buffs = GameManager.Instance.Buffs;
+                string permanentBuffs = GameManager.Instance.PermanentBuffs;
                 
                 // Combine both buff lists
                 List<string> allBuffs = new List<string>();
@@ -161,9 +144,10 @@ public class SquadDetailsController : MonoBehaviour
                 buffsText = allBuffs.Count > 0 ? string.Join("\n", allBuffs.Select(buff => $"- {buff}")) : "No buffs";
             }
 
-            unitDetailsText.text = $"Name: {unit.unit}\nHealth: {unit.health}\nArmor: {unit.armor}\n" +
+            if (isPlayerSquad) unit = CombatStats.Build(unit, GameContent.Units, GameManager.Instance.SelectedCharacter, GameManager.Instance.State.buffs.ToArray(), GameManager.Instance.State.permanent.ToArray());
+            unitDetailsText.text = $"Name: {GameContent.Units.Resolve(unit).DisplayName}\nHealth: {unit.health}\nArmor: {unit.armor}\n" +
                                    $"Move Speed: {unit.moveSpeed}\nAttack Damage: {unit.minimumAttackDamage}-{unit.maximumAttackDamage}\n" +
-                                   $"Attack Speed: {unit.attackSpeed}\nAttack Range: {unit.attackRange}";
+                                   $"Attacks/sec: {unit.attacksPerSecond:0.##}\nAttack Range: {unit.attackRange}";
             
             // Add buffs section only for hero
             if (unit.unit == selectedCharacter)
@@ -231,6 +215,11 @@ public class SquadDetailsController : MonoBehaviour
 
     void UpdateUnitPlacements()
     {
+        if (isPlayerSquad && !GameManager.Instance.SetPlayerSquad(new UnitArrayWrapper { units = unitDict.Values.ToArray() }))
+        {
+            var saved = GameManager.Instance.PlayerSquad.units;
+            foreach (var unit in unitDict.Values) unit.placement = saved.Single(u => u.instanceId == unit.instanceId).placement;
+        }
         foreach (var kvp in unitDict)
         {
             int cellIndex = kvp.Value.placement;
@@ -242,43 +231,35 @@ public class SquadDetailsController : MonoBehaviour
             }
         }
 
-        // Save the updated squad
-        if (isPlayerSquad)
-        {
-            UnitArrayWrapper playerSquadWrapper = new UnitArrayWrapper { units = unitDict.Values.ToArray() };
-            string squadJson = JsonUtility.ToJson(playerSquadWrapper);
-            PlayerPrefs.SetString("PlayerSquad", squadJson);
-            GameManager.Instance.SetPlayerSquad(playerSquadWrapper);
-            GameManager.Instance.SaveGameState();
-        }
+
     }
 
     void OnLeftButtonClicked()
     {
         int newPos = GetNewPosition(selectedUnit.placement, Vector2.left);
         SwapUnits(selectedUnit.placement, newPos);
-        SetMovementButtons(newPos);
+        SetMovementButtons(selectedUnit.placement);
     }
 
     void OnRightButtonClicked()
     {
         int newPos = GetNewPosition(selectedUnit.placement, Vector2.right);
         SwapUnits(selectedUnit.placement, newPos);
-        SetMovementButtons(newPos);
+        SetMovementButtons(selectedUnit.placement);
     }
 
     void OnTopButtonClicked()
     {
         int newPos = GetNewPosition(selectedUnit.placement, Vector2.up);
         SwapUnits(selectedUnit.placement, newPos);
-        SetMovementButtons(newPos);
+        SetMovementButtons(selectedUnit.placement);
     }
 
     void OnBottomButtonClicked()
     {
         int newPos = GetNewPosition(selectedUnit.placement, Vector2.down);
         SwapUnits(selectedUnit.placement, newPos);
-        SetMovementButtons(newPos);
+        SetMovementButtons(selectedUnit.placement);
     }
 
     int GetNewPosition(int currentPos, Vector2 direction)

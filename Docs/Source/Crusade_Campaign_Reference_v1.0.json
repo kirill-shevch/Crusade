@@ -1,0 +1,854 @@
+{
+  "title": "Crusade campaign graph",
+  "status": "user-confirmed edges, bosses drawn from amended notebook",
+  "levels": [
+    {
+      "id": 1,
+      "name": "деревня",
+      "faction_code": "НЕ",
+      "boss_name": "староста деревни",
+      "boss_type": "H",
+      "outgoing": [
+        2
+      ]
+    },
+    {
+      "id": 2,
+      "name": "лес (животные и духи)",
+      "faction_code": "A",
+      "boss_name": "Волк-вожак",
+      "boss_type": "MS",
+      "outgoing": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": 3,
+      "name": "лагерь разбойников",
+      "faction_code": "НО",
+      "boss_name": "Главарь",
+      "boss_type": "MS",
+      "outgoing": [
+        5,
+        6
+      ]
+    },
+    {
+      "id": 4,
+      "name": "лагерь гоблинов",
+      "faction_code": "G",
+      "boss_name": "гоблин-пулемётчик",
+      "boss_type": "RM",
+      "outgoing": [
+        6,
+        7
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Пещера головерезов",
+      "faction_code": "НО",
+      "boss_name": "Трёхрукий",
+      "boss_type": "MM",
+      "outgoing": [
+        8
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Болото",
+      "faction_code": "A",
+      "boss_name": "Болотная тварь",
+      "boss_type": "RM",
+      "outgoing": [
+        8
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Крепость орков",
+      "faction_code": "G",
+      "boss_name": "Огр",
+      "boss_type": "MM",
+      "outgoing": [
+        8
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Пограничная застава империи",
+      "faction_code": "НЕ",
+      "boss_name": "дозорный-ветеран",
+      "boss_type": "MS",
+      "outgoing": [
+        9,
+        10
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Фермерские угодья",
+      "faction_code": "НЕ",
+      "boss_name": "бык-убийца",
+      "boss_type": "MM",
+      "outgoing": [
+        11
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Железная шахта",
+      "faction_code": "НЕ",
+      "boss_name": "шахтёр Билл",
+      "boss_type": "RM",
+      "outgoing": [
+        12,
+        13
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Магическая башня",
+      "faction_code": "НЕ",
+      "boss_name": "Гомункул",
+      "boss_type": "MS",
+      "outgoing": [
+        12,
+        14
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Кузница",
+      "faction_code": "НЕ",
+      "boss_name": "Живой доспех",
+      "boss_type": "MM",
+      "outgoing": [
+        14,
+        15
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Конюшни",
+      "faction_code": "НЕ",
+      "boss_name": "Чемпион",
+      "boss_type": "MS",
+      "outgoing": [
+        15
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Южный Вестфаль",
+      "faction_code": "НЕ",
+      "boss_name": "Гриффон",
+      "boss_type": "MM",
+      "outgoing": [
+        16,
+        17,
+        18
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Северный Вестфаль",
+      "faction_code": "НЕ",
+      "boss_name": "Мантикора",
+      "boss_type": "RS",
+      "outgoing": [
+        16,
+        17,
+        18
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Гномий район",
+      "faction_code": "МG",
+      "boss_name": "Пьяница Эдди",
+      "boss_type": "MM",
+      "outgoing": [
+        19
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Эльфийский район",
+      "faction_code": "A",
+      "boss_name": "Энт",
+      "boss_type": "MS",
+      "outgoing": [
+        19,
+        20
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Трущобы",
+      "faction_code": "И",
+      "boss_name": "Мэр старого города",
+      "boss_type": "H",
+      "outgoing": [
+        20
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Квартал магов",
+      "faction_code": "НЕ",
+      "boss_name": "Архимаг",
+      "boss_type": "RM",
+      "outgoing": [
+        21
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Квартал аристократов",
+      "faction_code": "НЕ",
+      "boss_name": "Золотой Ангел",
+      "boss_type": "MS",
+      "outgoing": [
+        21
+      ]
+    },
+    {
+      "id": 21,
+      "name": "Ратуша",
+      "faction_code": "НЕ",
+      "boss_name": "Десница",
+      "boss_type": "H",
+      "outgoing": [
+        22
+      ]
+    },
+    {
+      "id": 22,
+      "name": "Побег",
+      "faction_code": "НЕ",
+      "boss_name": "Генерал-маг",
+      "boss_type": "RM",
+      "outgoing": [
+        23
+      ]
+    },
+    {
+      "id": 23,
+      "name": "Степи",
+      "faction_code": "G",
+      "boss_name": "волчья упряжка",
+      "boss_type": "MS",
+      "outgoing": [
+        24
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Предгорья",
+      "faction_code": "G",
+      "boss_name": "Тролль",
+      "boss_type": "MM",
+      "outgoing": [
+        25,
+        26
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Вход в копи",
+      "faction_code": "НО",
+      "boss_name": "Полу Огр",
+      "boss_type": "MS",
+      "outgoing": [
+        27
+      ]
+    },
+    {
+      "id": 26,
+      "name": "Подъём на перевал",
+      "faction_code": "A",
+      "boss_name": "Йети",
+      "boss_type": "MM",
+      "outgoing": [
+        28
+      ]
+    },
+    {
+      "id": 27,
+      "name": "Подземный тракт",
+      "faction_code": "И",
+      "boss_name": "Кузнец-мертвец",
+      "boss_type": "MM",
+      "outgoing": [
+        29,
+        30
+      ]
+    },
+    {
+      "id": 28,
+      "name": "Серпантин",
+      "faction_code": "МГ",
+      "boss_name": "Страж Хребта",
+      "boss_type": "RS",
+      "outgoing": [
+        31
+      ]
+    },
+    {
+      "id": 29,
+      "name": "Бездонная лестница",
+      "faction_code": "И",
+      "boss_name": "Мёртвый ползун",
+      "boss_type": "MS",
+      "outgoing": [
+        32
+      ]
+    },
+    {
+      "id": 30,
+      "name": "Руины гномов",
+      "faction_code": "И",
+      "boss_name": "мёртвый горный великан",
+      "boss_type": "RS",
+      "outgoing": [
+        33
+      ]
+    },
+    {
+      "id": 31,
+      "name": "Застава горных великанов",
+      "faction_code": "МГ",
+      "boss_name": "алхимик камня",
+      "boss_type": "H",
+      "outgoing": [
+        34,
+        35,
+        36
+      ]
+    },
+    {
+      "id": 32,
+      "name": "Сердце земли",
+      "faction_code": "И",
+      "boss_name": "Мясо и кости",
+      "boss_type": "RM",
+      "outgoing": [
+        37
+      ]
+    },
+    {
+      "id": 33,
+      "name": "Сокровищница",
+      "faction_code": "И",
+      "boss_name": "Золотой скелет",
+      "boss_type": "MM",
+      "outgoing": [
+        37
+      ]
+    },
+    {
+      "id": 34,
+      "name": "Клетка",
+      "faction_code": "МГ",
+      "boss_name": "Медведь-берсерк",
+      "boss_type": "MM",
+      "outgoing": [
+        38
+      ]
+    },
+    {
+      "id": 35,
+      "name": "Оружейня",
+      "faction_code": "МГ",
+      "boss_name": "Тролль Пушка",
+      "boss_type": "RM",
+      "outgoing": [
+        38
+      ]
+    },
+    {
+      "id": 36,
+      "name": "Столовая",
+      "faction_code": "МГ",
+      "boss_name": "Жирный Великан",
+      "boss_type": "MS",
+      "outgoing": [
+        38
+      ]
+    },
+    {
+      "id": 37,
+      "name": "Могильник",
+      "faction_code": "И",
+      "boss_name": "Могильщик",
+      "boss_type": "H",
+      "outgoing": [
+        39
+      ]
+    },
+    {
+      "id": 38,
+      "name": "Пещера горного короля",
+      "faction_code": "МГ",
+      "boss_name": "Горный Король",
+      "boss_type": "MM",
+      "outgoing": [
+        39
+      ]
+    },
+    {
+      "id": 39,
+      "name": "Спуск",
+      "faction_code": "НО",
+      "boss_name": "Сержант Духо [?]",
+      "boss_type": "MS",
+      "outgoing": [
+        40
+      ]
+    },
+    {
+      "id": 40,
+      "name": "Пустыня",
+      "faction_code": "НО",
+      "boss_name": "Пыльный Пушкарь",
+      "boss_type": "RS",
+      "outgoing": [
+        41,
+        42
+      ]
+    },
+    {
+      "id": 41,
+      "name": "Долинна ветров",
+      "faction_code": "НО",
+      "boss_name": "Кричащий-на-ветер",
+      "boss_type": "RM",
+      "outgoing": [
+        43,
+        44
+      ]
+    },
+    {
+      "id": 42,
+      "name": "Раскалённые пески",
+      "faction_code": "И",
+      "boss_name": "труп коня",
+      "boss_type": "MM",
+      "outgoing": [
+        44,
+        45
+      ]
+    },
+    {
+      "id": 43,
+      "name": "Каньон",
+      "faction_code": "НО",
+      "boss_name": "Рейдерский танк",
+      "boss_type": "RS",
+      "outgoing": [
+        46
+      ]
+    },
+    {
+      "id": 44,
+      "name": "Лагерь культистов",
+      "faction_code": "СН",
+      "boss_name": "цепной демон",
+      "boss_type": "не указан",
+      "outgoing": [
+        46,
+        47
+      ]
+    },
+    {
+      "id": 45,
+      "name": "Озеро лавы",
+      "faction_code": "И",
+      "boss_name": "некромант пиромант",
+      "boss_type": "RM",
+      "outgoing": [
+        47
+      ]
+    },
+    {
+      "id": 46,
+      "name": "Арена",
+      "faction_code": "СН",
+      "boss_name": "два чемпиона",
+      "boss_type": "не указан",
+      "outgoing": [
+        48
+      ]
+    },
+    {
+      "id": 47,
+      "name": "Жертвенные пещеры",
+      "faction_code": "СН",
+      "boss_name": "голодный алтарь",
+      "boss_type": "не указан",
+      "outgoing": [
+        49
+      ]
+    },
+    {
+      "id": 48,
+      "name": "Адская кузня",
+      "faction_code": "СН",
+      "boss_name": "голова-наковальня",
+      "boss_type": "не указан",
+      "outgoing": [
+        50
+      ]
+    },
+    {
+      "id": 49,
+      "name": "Алтарь огня",
+      "faction_code": "СН",
+      "boss_name": "пламя из ада",
+      "boss_type": "не указан",
+      "outgoing": [
+        50
+      ]
+    },
+    {
+      "id": 50,
+      "name": "Демонический круг",
+      "faction_code": "СН",
+      "boss_name": "белиал",
+      "boss_type": "не указан",
+      "outgoing": [
+        51
+      ]
+    },
+    {
+      "id": 51,
+      "name": "Испатыние железом",
+      "faction_code": "СН",
+      "boss_name": "железная дева",
+      "boss_type": "не указан",
+      "outgoing": [
+        52
+      ]
+    },
+    {
+      "id": 52,
+      "name": "Испытание огнём",
+      "faction_code": "СН",
+      "boss_name": "огненный бык",
+      "boss_type": "не указан",
+      "outgoing": [
+        53
+      ]
+    },
+    {
+      "id": 53,
+      "name": "Адские Врата",
+      "faction_code": "СН",
+      "boss_name": "ведьма",
+      "boss_type": "не указан",
+      "outgoing": []
+    }
+  ],
+  "edges": [
+    {
+      "from": 1,
+      "to": 2
+    },
+    {
+      "from": 2,
+      "to": 3
+    },
+    {
+      "from": 2,
+      "to": 4
+    },
+    {
+      "from": 3,
+      "to": 5
+    },
+    {
+      "from": 3,
+      "to": 6
+    },
+    {
+      "from": 4,
+      "to": 6
+    },
+    {
+      "from": 4,
+      "to": 7
+    },
+    {
+      "from": 5,
+      "to": 8
+    },
+    {
+      "from": 6,
+      "to": 8
+    },
+    {
+      "from": 7,
+      "to": 8
+    },
+    {
+      "from": 8,
+      "to": 9
+    },
+    {
+      "from": 8,
+      "to": 10
+    },
+    {
+      "from": 9,
+      "to": 11
+    },
+    {
+      "from": 10,
+      "to": 12
+    },
+    {
+      "from": 10,
+      "to": 13
+    },
+    {
+      "from": 11,
+      "to": 12
+    },
+    {
+      "from": 11,
+      "to": 14
+    },
+    {
+      "from": 12,
+      "to": 14
+    },
+    {
+      "from": 12,
+      "to": 15
+    },
+    {
+      "from": 13,
+      "to": 15
+    },
+    {
+      "from": 14,
+      "to": 16
+    },
+    {
+      "from": 14,
+      "to": 17
+    },
+    {
+      "from": 14,
+      "to": 18
+    },
+    {
+      "from": 15,
+      "to": 16
+    },
+    {
+      "from": 15,
+      "to": 17
+    },
+    {
+      "from": 15,
+      "to": 18
+    },
+    {
+      "from": 16,
+      "to": 19
+    },
+    {
+      "from": 17,
+      "to": 19
+    },
+    {
+      "from": 17,
+      "to": 20
+    },
+    {
+      "from": 18,
+      "to": 20
+    },
+    {
+      "from": 19,
+      "to": 21
+    },
+    {
+      "from": 20,
+      "to": 21
+    },
+    {
+      "from": 21,
+      "to": 22
+    },
+    {
+      "from": 22,
+      "to": 23
+    },
+    {
+      "from": 23,
+      "to": 24
+    },
+    {
+      "from": 24,
+      "to": 25
+    },
+    {
+      "from": 24,
+      "to": 26
+    },
+    {
+      "from": 25,
+      "to": 27
+    },
+    {
+      "from": 26,
+      "to": 28
+    },
+    {
+      "from": 27,
+      "to": 29
+    },
+    {
+      "from": 27,
+      "to": 30
+    },
+    {
+      "from": 29,
+      "to": 32
+    },
+    {
+      "from": 30,
+      "to": 33
+    },
+    {
+      "from": 32,
+      "to": 37
+    },
+    {
+      "from": 33,
+      "to": 37
+    },
+    {
+      "from": 37,
+      "to": 39
+    },
+    {
+      "from": 28,
+      "to": 31
+    },
+    {
+      "from": 31,
+      "to": 34
+    },
+    {
+      "from": 31,
+      "to": 35
+    },
+    {
+      "from": 31,
+      "to": 36
+    },
+    {
+      "from": 34,
+      "to": 38
+    },
+    {
+      "from": 35,
+      "to": 38
+    },
+    {
+      "from": 36,
+      "to": 38
+    },
+    {
+      "from": 38,
+      "to": 39
+    },
+    {
+      "from": 39,
+      "to": 40
+    },
+    {
+      "from": 40,
+      "to": 41
+    },
+    {
+      "from": 40,
+      "to": 42
+    },
+    {
+      "from": 41,
+      "to": 43
+    },
+    {
+      "from": 41,
+      "to": 44
+    },
+    {
+      "from": 42,
+      "to": 44
+    },
+    {
+      "from": 42,
+      "to": 45
+    },
+    {
+      "from": 45,
+      "to": 47
+    },
+    {
+      "from": 43,
+      "to": 46
+    },
+    {
+      "from": 44,
+      "to": 46
+    },
+    {
+      "from": 44,
+      "to": 47
+    },
+    {
+      "from": 46,
+      "to": 48
+    },
+    {
+      "from": 47,
+      "to": 49
+    },
+    {
+      "from": 48,
+      "to": 50
+    },
+    {
+      "from": 49,
+      "to": 50
+    },
+    {
+      "from": 50,
+      "to": 51
+    },
+    {
+      "from": 51,
+      "to": 52
+    },
+    {
+      "from": 52,
+      "to": 53
+    }
+  ],
+  "validations": {
+    "levels": 53,
+    "edges": 72,
+    "bosses": 53,
+    "enemy_filled_entries": 99,
+    "sink_nodes": [
+      53
+    ],
+    "all_reachable_from_1": true
+  }
+}

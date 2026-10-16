@@ -164,7 +164,7 @@ public class MapLoader : MonoBehaviour
                 Edge edge = GetEdge(fromId, toId);
                 if (edge.squad.Length > 0)
                 {
-                    SaveSquadsInfo(edge, toId);
+                    if (!GameManager.Instance.StartBattle(toId)) return;
                     SceneManager.LoadScene("BattleScene");
                 }
                 else
@@ -173,25 +173,6 @@ public class MapLoader : MonoBehaviour
                 }
             }
         }
-    }
-
-    void SaveSquadsInfo(Edge edge, int targetNodeId)
-    {
-        // Store the enemy squad
-        PlayerPrefs.SetString("EnemySquad", JsonUtility.ToJson(new UnitArrayWrapper { units = edge.squad }));
-        PlayerPrefs.SetInt("TargetNode", targetNodeId);
-
-        // Add to visited nodes and edges
-        int fromId = Mathf.Min(edge.from, edge.to);
-        int toId = Mathf.Max(edge.from, edge.to);
-        string edgeKey = $"{fromId}-{toId}";
-        
-        GameManager.Instance.AddVisitedEdge(edgeKey);
-
-        // Save node type for rewards
-        string nodeType = GetNodeTypeById(targetNodeId);
-        PlayerPrefs.SetString("CurrentNodeType", nodeType);
-        PlayerPrefs.Save();
     }
 
     void SpawnPlayerSquad()
@@ -214,18 +195,21 @@ public class MapLoader : MonoBehaviour
     {
         foreach (NodeController connectedNode in currentPlayerNode.connectedNodes)
         {
+            connectedNode.GetComponent<Button>().onClick.RemoveAllListeners();
             connectedNode.GetComponent<Button>().onClick.AddListener(() => OnNodeClicked(connectedNode));
         }
     }
 
     void MoveToNode(NodeController node)
     {
+        if (!GameManager.Instance.SetCurrentNode(node.nodeId)) return;
+        if (GameManager.Instance.State.reward != null) { SceneManager.LoadScene("RewardsScene"); return; }
         playerObject.transform.position = node.transform.position;
         currentPlayerNode = node;
         
         // Save position after each move
-        GameManager.Instance.SetCurrentNode(node.nodeId);
-        GameManager.Instance.SaveGameState();
+
+
         
         StartCoroutine(CenterOnPlayerNodeAnimated());
         CheckAvailableNodes();
@@ -309,13 +293,13 @@ public class MapLoader : MonoBehaviour
     void OnSquadClicked(Unit[] squad, int squadType = 0)
     {
         // Store current position before leaving to squad screen
-        GameManager.Instance.SetCurrentNode(currentPlayerNode.nodeId);
-        GameManager.Instance.SaveGameState();
+
+
 
         // Store squad details for the squad screen
-        PlayerPrefs.SetString("DetailsSquad", JsonUtility.ToJson(new UnitArrayWrapper { units = squad }));
-        PlayerPrefs.SetInt("isPlayerSquad", squadType);
-        PlayerPrefs.Save();
+        GameManager.Instance.DetailsSquad = new UnitArrayWrapper { units = squad };
+        GameManager.Instance.DetailsIsPlayer = squadType == 1;
+
 
         SceneController.Instance.SquadDetailsScene();
     }

@@ -1,0 +1,5 @@
+{
+  "name": "Crusade.Editor",
+  "references": ["Crusade.Runtime"],
+  "includePlatforms": ["Editor"]
+}

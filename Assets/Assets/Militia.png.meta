@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Militia_0: -2644573133280148179
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

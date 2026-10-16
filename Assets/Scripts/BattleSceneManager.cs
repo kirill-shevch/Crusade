@@ -21,7 +21,9 @@ public class BattleSceneManager : MonoBehaviour
     private Dictionary<GameObject, TextMeshProUGUI> unitHPTexts = new Dictionary<GameObject, TextMeshProUGUI>();
     private UnitArrayWrapper playerSquadWrapper;
     private UnitArrayWrapper enemySquadWrapper;
+    private BattleState battleState;
     private bool battleStarted = false;
+    private readonly ICombatRandom combatRandom = new SeededCombatRandom(System.Environment.TickCount);
     [SerializeField] private float speedMultiplier = 1f;
 
     void Start()
@@ -32,7 +34,7 @@ public class BattleSceneManager : MonoBehaviour
 
     void Update()
     {
-        if (!battleStarted)
+        if (!battleStarted || battleFinished)
         {
             return;
         }
@@ -57,6 +59,7 @@ public class BattleSceneManager : MonoBehaviour
 
     void ExecuteUnitActions(GameObject unitObject, Dictionary<int, GameObject> potentialTargets)
     {
+        if (battleFinished) return;
         Unit unitData = unitObject.GetComponent<UnitBehavior>().unit;
 
         if (unitData != null)
@@ -119,7 +122,7 @@ public class BattleSceneManager : MonoBehaviour
 
             StartCoroutine(ProjectileMovement(projectile, targetObject, attackerData, targetData));
 
-            attackerData.attackCooldown = attackerData.attackSpeed;
+            attackerData.attackCooldown = CombatResolver.Interval(attackerData.attacksPerSecond);
         }
         else
         {
@@ -129,42 +132,20 @@ public class BattleSceneManager : MonoBehaviour
 
     void InitializeSquads()
     {
-        string playerSquadJson = PlayerPrefs.GetString("PlayerSquad", "{}");
-        playerSquadWrapper = JsonUtility.FromJson<UnitArrayWrapper>(playerSquadJson);
-        FulfillUnitDetails(playerSquadWrapper.units);
+        string playerSquadJson = JsonUtility.ToJson(GameManager.Instance.PlayerSquad);
+        string enemySquadJson = JsonUtility.ToJson(GameManager.Instance.EnemySquad);
+        battleState = new BattleState(GameContent.Units,
+            JsonUtility.FromJson<UnitArrayWrapper>(playerSquadJson)?.units,
+            JsonUtility.FromJson<UnitArrayWrapper>(enemySquadJson)?.units);
+        playerSquadWrapper = battleState.Player;
+        enemySquadWrapper = battleState.Enemy;
         ApplyBuffs(playerSquadWrapper.units);
+        // Existing buffs raise starting HP. This is also the maximum for this battle.
+        foreach (var unit in playerSquadWrapper.units) unit.maxHealth = unit.health;
         PlaceUnits(playerSquadWrapper.units, playerSquadPanel.transform, playerUnits);
         PlaceAbilities(playerSquadWrapper.units, abilityPanel.transform, playerUnits);
 
-        string enemySquadJson = PlayerPrefs.GetString("EnemySquad", "{}");
-        enemySquadWrapper = JsonUtility.FromJson<UnitArrayWrapper>(enemySquadJson);
-        FulfillUnitDetails(enemySquadWrapper.units);
         PlaceUnits(enemySquadWrapper.units, enemySquadPanel.transform, enemyUnits);
-    }
-
-    void FulfillUnitDetails(Unit[] squad)
-    {
-        TextAsset unitConfig = Resources.Load<TextAsset>("Configs/Units");
-        UnitArrayWrapper config = JsonUtility.FromJson<UnitArrayWrapper>(unitConfig.text);
-
-        foreach (Unit unit in squad)
-        {
-            Unit detailedUnit = config.units.FirstOrDefault(u => u.unit == unit.unit);
-            if (detailedUnit != null)
-            {
-                unit.level = detailedUnit.level;
-                unit.description = detailedUnit.description;
-                unit.health = detailedUnit.health;
-                unit.armor = detailedUnit.armor;
-                unit.moveSpeed = detailedUnit.moveSpeed;
-                unit.minimumAttackDamage = detailedUnit.minimumAttackDamage;
-                unit.maximumAttackDamage = detailedUnit.maximumAttackDamage;
-                unit.attackSpeed = detailedUnit.attackSpeed;
-                unit.attackRange = detailedUnit.attackRange;
-                unit.projectile = detailedUnit.projectile;
-                unit.ability = detailedUnit.ability;
-            }
-        }
     }
 
     void PlaceUnits(Unit[] squad, Transform panel, Dictionary<int, GameObject> unitDict)
@@ -270,6 +251,7 @@ public class BattleSceneManager : MonoBehaviour
     // Shieldbash Ability
     private void ShieldBash(Unit caster, GameObject casterGameObject, Button abilityButton)
     {
+        if (battleFinished) return;
         StartCoroutine(ShieldBashCoroutine(caster, casterGameObject, abilityButton));
     }
 
@@ -305,11 +287,11 @@ public class BattleSceneManager : MonoBehaviour
         foreach (var target in targets)
         {
             Unit targetData = target.GetComponent<UnitBehavior>().unit;
-            float oldHealth = targetData.health;
-            targetData.health -= 25;
-            unitHPTexts[target].text = targetData.health.ToString();
+            var hit = ApplyDamage(caster, target, 25);
+            if (battleFinished) yield break;
+            if (hit.evaded || targetData.health == 0 || caster.health == 0) continue;
 
-            Debug.Log($"{caster.unit} used Shieldbash on {targetData.unit}, dealing 25 damage.");
+            Debug.Log($"{caster.unit} used Shieldbash on {targetData.unit}, dealing {hit.hpLost} damage.");
             
             // Push back by teleporting
             Vector2 pushDirection = (target.transform.position - casterGameObject.transform.position).normalized;
@@ -321,18 +303,14 @@ public class BattleSceneManager : MonoBehaviour
             targetData.moveSpeed /= 2f; // Slow by half
             StartCoroutine(RevertSlow(targetData, originalSpeed, 0.5f));
 
-            if (targetData.health <= 0)
-            {
-                target.SetActive(false);
-                unitHPTexts[target].text = string.Empty;
-                OnUnitDeath(target);
-            }
+
         }
     }
 
     // Rapidfire Ability
     private void RapidFire(Unit caster, GameObject casterGameObject, Button abilityButton)
     {
+        if (battleFinished) return;
         StartCoroutine(RapidFireCoroutine(caster, casterGameObject, abilityButton));
     }
 
@@ -351,21 +329,23 @@ public class BattleSceneManager : MonoBehaviour
         
         // Increase attack speed
         UnitBehavior behavior = casterGameObject.GetComponent<UnitBehavior>();
-        behavior.unit.attackSpeed -= 0.9f;
+        float originalRate = behavior.unit.attacksPerSecond;
+        behavior.unit.attacksPerSecond = CombatStats.RateWithLegacyReduction(originalRate, 0.9f);
 
         // Revert after 3 seconds
-        StartCoroutine(RevertRapidFire(behavior, 3f));
+        StartCoroutine(RevertRapidFire(behavior, originalRate, 3f));
     }
 
-    private IEnumerator RevertRapidFire(UnitBehavior behavior, float duration)
+    private IEnumerator RevertRapidFire(UnitBehavior behavior, float originalRate, float duration)
     {
         yield return new WaitForSeconds(duration);
-        behavior.unit.attackSpeed += 0.9f;
+        behavior.unit.attacksPerSecond = originalRate;
     }
 
     // Thunderstorm Ability
     private void Thunderstorm(Unit caster, Button abilityButton)
     {
+        if (battleFinished) return;
         StartCoroutine(ThunderstormCoroutine(caster, abilityButton));
     }
 
@@ -388,23 +368,18 @@ public class BattleSceneManager : MonoBehaviour
 
             // Deal 45 damage
             Unit targetData = enemy.GetComponent<UnitBehavior>().unit;
-            float oldHealth = targetData.health;
-            targetData.health -= 45;
-            unitHPTexts[enemy].text = targetData.health.ToString();
+            var hit = ApplyDamage(caster, enemy, 45);
+            if (battleFinished) yield break;
+            if (hit.evaded || targetData.health == 0 || caster.health == 0) continue;
 
             // Apply slow effect
             float originalSpeed = targetData.moveSpeed;
             targetData.moveSpeed /= 2f; // Slow by half
             StartCoroutine(RevertSlow(targetData, originalSpeed, 0.5f));
 
-            Debug.Log($"{caster.unit} used Thunderstorm on {targetData.unit}, dealing 45 damage.");
+            Debug.Log($"{caster.unit} used Thunderstorm on {targetData.unit}, dealing {hit.hpLost} damage.");
 
-            if (targetData.health <= 0)
-            {
-                enemy.SetActive(false);
-                unitHPTexts[enemy].text = string.Empty;
-                OnUnitDeath(enemy);
-            }
+
         }
     }
 
@@ -440,54 +415,14 @@ public class BattleSceneManager : MonoBehaviour
 
     void ApplyBuffs(Unit[] squad)
     {
-        string buffs = PlayerPrefs.GetString("PlayerBuffs", "");
-        string permanentBuffs = PlayerPrefs.GetString("PermanentBuffs", "");
-        List<string> playerBuffs = new List<string>(buffs.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
-        List<string> allPermanentBuffs = new List<string>(permanentBuffs.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
-        string selectedCharacter = PlayerPrefs.GetString("SelectedCharacter", "Knight");
-
-        foreach (Unit unit in squad)
-        {
-            if (unit.unit == selectedCharacter)
-            {
-                // Apply regular buffs
-                foreach (string buff in playerBuffs)
-                {
-                    if (buff == "Damage")
-                    {
-                        unit.minimumAttackDamage += 5;
-                        unit.maximumAttackDamage += 5;
-                    }
-                    else if (buff == "Armor")
-                    {
-                        unit.armor += 3;
-                    }
-                }
-
-                // Apply permanent buffs
-                foreach (string buff in allPermanentBuffs)
-                {
-                    switch (buff)
-                    {
-                        case "BullHeart":
-                            unit.health += 15;
-                            break;
-                        case "OrbOfSpeed":
-                            unit.attackSpeed -= 0.2f;
-                            break;
-                        case "MagicPotion":
-                            unit.minimumAttackDamage += 3;
-                            unit.maximumAttackDamage += 3;
-                            unit.health += 5;
-                            break;
-                    }
-                }
-            }
-        }
+        var game = GameManager.Instance;
+        var state = game.State;
+        for (int i = 0; i < squad.Length; i++)
+            squad[i] = CombatStats.Build(squad[i], GameContent.Units, game.SelectedCharacter, state.buffs.ToArray(), state.permanent.ToArray());
     }
-
     void StartBattle()
     {
+        if (battleFinished) return;
         fightButton.gameObject.SetActive(false);
         battleStarted = true;
 
@@ -567,6 +502,11 @@ public class BattleSceneManager : MonoBehaviour
         // Ensure the projectile reaches the target
         projectile.transform.position = targetPosition;
 
+        if (battleFinished || targetData.health <= 0 || attackerData.health <= 0) { Destroy(projectile); yield break; }
+        double rawDamage = attackerData.minimumAttackDamage + combatRandom.Next01() *
+            (attackerData.maximumAttackDamage - attackerData.minimumAttackDamage);
+        var hit = ApplyDamage(attackerData, targetObject, rawDamage);
+        if (battleFinished || hit.evaded || hit.killed) { Destroy(projectile); yield break; }
         // Calculate impact direction and apply small knockback
         Vector2 impactDirection = (targetObject.transform.position - startPosition).normalized;
         float knockbackDistance = 0.2f; // Small knockback distance
@@ -585,21 +525,6 @@ public class BattleSceneManager : MonoBehaviour
             yield return null;
         }
 
-        // Deal damage
-        float damage = Random.Range(attackerData.minimumAttackDamage, attackerData.maximumAttackDamage) - targetData.armor;
-        var oldHealth = targetData.health;
-        targetData.health -= (int)Mathf.Max(1, damage);
-
-        // Update target's health text
-        Debug.Log($"{attackerData.unit} attacks! Changing health of {targetData.unit} from {oldHealth} to {targetData.health}.");
-        unitHPTexts[targetObject].text = targetData.health.ToString();
-        if (targetData.health <= 0)
-        {
-            targetObject.SetActive(false);
-            unitHPTexts[targetObject].text = string.Empty;
-            OnUnitDeath(targetObject);
-        }
-
         // Destroy projectile after it reaches the target
         Destroy(projectile);
     }
@@ -611,13 +536,34 @@ public class BattleSceneManager : MonoBehaviour
         unit.moveSpeed = originalSpeed;
     }
 
+    private CombatResult ApplyDamage(Unit attacker, GameObject targetObject, double rawDamage)
+    {
+        if (battleFinished || !targetObject.activeSelf) return default;
+        Unit target = targetObject.GetComponent<UnitBehavior>().unit;
+        var result = CombatResolver.Damage(attacker, target, rawDamage, combatRandom);
+        unitHPTexts[targetObject].text = target.health.ToString();
+        foreach (var pair in unitHPTexts)
+            if (pair.Key != null && pair.Key.GetComponent<UnitBehavior>()?.unit == attacker)
+                pair.Value.text = attacker.health.ToString();
+        if (result.killed)
+        {
+            targetObject.SetActive(false);
+            unitHPTexts[targetObject].text = string.Empty;
+            OnUnitDeath(targetObject);
+        }
+        return result;
+    }
+    private bool battleFinished;
     public void OnUnitDeath(GameObject unitObject)
     {
+        if (battleFinished) return;
         if (playerUnits.ContainsValue(unitObject))
         {
             Debug.Log("playerUnits death");
             if (playerUnits.Values.All(u => !u.activeSelf))
             {
+                battleFinished = true; battleStarted = false; StopAllCoroutines();
+                GameManager.Instance.ResetGame();
                 loseButton.gameObject.SetActive(true);
             }
         }
@@ -626,6 +572,8 @@ public class BattleSceneManager : MonoBehaviour
             Debug.Log("enemy units death");
             if (enemyUnits.Values.All(u => !u.activeSelf))
             {
+                battleFinished = true; battleStarted = false; StopAllCoroutines();
+                GameManager.Instance.WinBattle();
                 winButton.gameObject.SetActive(true);
             }
         }
@@ -633,30 +581,10 @@ public class BattleSceneManager : MonoBehaviour
 
     public void OnWinButtonClicked()
     {
-        int targetNodeId = PlayerPrefs.GetInt("TargetNode", 1);
-
-        // Load map config and find current map
-        var mapConfig = JsonUtility.FromJson<MapConfig>(Resources.Load<TextAsset>("Configs/Map").text);
-        var currentMap = mapConfig.maps.First(m => m.name == GameManager.Instance.CurrentMap);
-
-        // Find target node
-        var targetNode = currentMap.nodes.First(n => n.id == targetNodeId);
-
-        if (GameManager.Instance.VisitedNodes.Contains(targetNodeId))
-        {
-            GameManager.Instance.SetCurrentNode(targetNodeId);
-            SceneController.Instance.LoadMap();
-        }
-        else
-        {
-            GameManager.Instance.SetCurrentNode(targetNodeId);
-            SceneManager.LoadScene("RewardsScene");
-        }
+        if (GameManager.Instance.WinBattle()) SceneManager.LoadScene(GameManager.Instance.ResumeScene);
     }
-
     public void OnLoseButtonClicked()
     {
-        PlayerPrefs.DeleteAll();
-        SceneManager.LoadScene("MainMenuScene");
+        if (GameManager.Instance.ResetGame()) SceneManager.LoadScene("MainMenuScene");
     }
 }

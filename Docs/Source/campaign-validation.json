@@ -1,0 +1,12 @@
+{
+  "Levels": 53,
+  "UniqueIds": 53,
+  "Edges": 72,
+  "UniqueEdges": 72,
+  "Reachable": 53,
+  "Bosses": 53,
+  "Errors": [],
+  "Correct37": true,
+  "Correct45": true,
+  "Wrong27": false
+}

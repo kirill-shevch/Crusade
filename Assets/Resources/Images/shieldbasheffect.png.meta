@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      shieldbasheffect_0: 624923096631757452
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,0 +1,5 @@
+{
+  "name": "Crusade.PlayMode.Tests",
+  "references": ["Crusade.Runtime", "Unity.TextMeshPro", "UnityEngine.UI"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

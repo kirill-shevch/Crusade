@@ -40,12 +40,12 @@ public class SceneController : MonoBehaviour
         continueButton = GameObject.FindGameObjectWithTag("ContinueButton")?.GetComponent<Button>();
         if (continueButton != null)
         {
-            bool hasSavedGame = PlayerPrefs.HasKey("SelectedCharacter") && !string.IsNullOrEmpty(PlayerPrefs.GetString("SelectedCharacter"));
+            bool hasSavedGame = GameManager.Ensure().HasRun;
             continueButton.interactable = hasSavedGame;
             continueButton.onClick.RemoveAllListeners();
             if (hasSavedGame)
             {
-                continueButton.onClick.AddListener(LoadMap);
+                continueButton.onClick.AddListener(() => SceneManager.LoadScene(GameManager.Instance.ResumeScene));
             }
         }
 
@@ -81,7 +81,7 @@ public class SceneController : MonoBehaviour
     // Method to load the Crusade Setup scene
     public void LoadCrusadeSetup()
     {
-        PlayerPrefs.DeleteAll();
+        // New run is committed only after character selection.
         SceneManager.LoadScene("CrusadeSetupScene");
     }
 
@@ -112,13 +112,12 @@ public class SceneController : MonoBehaviour
     // Method to load the Lose scene
     public void LoadLose()
     {
-        PlayerPrefs.DeleteAll(); // Clear all saved data when player loses
-        SceneManager.LoadScene("LoseScene");
+        if (GameManager.Ensure().ResetGame()) SceneManager.LoadScene("MainMenuScene");
     }
 
     // Method to load the Win scene
     public void LoadWin()
     {
-        SceneManager.LoadScene("WinScene");
+        SceneManager.LoadScene(GameManager.Ensure().ResumeScene);
     }
 }

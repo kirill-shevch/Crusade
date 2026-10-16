@@ -53,20 +53,7 @@ public class CrusadeSetupController : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(selectedOption))
         {
-            // Reset game state before starting new game
-            GameManager.Instance.ResetGame();
-            
-            GameManager.Instance.SetCurrentMap("FieldMap");
-
-            // Set up new game
-            GameManager.Instance.SetSelectedCharacter(selectedOption);
-            GameManager.Instance.SetCurrentNode(1);
-            
-            // Create initial squad with selected character
-            Unit[] playerSquad = new Unit[] { new Unit { unit = selectedOption, placement = 1 } };
-            GameManager.Instance.SetPlayerSquad(new UnitArrayWrapper { units = playerSquad });
-            
-            SceneController.Instance.LoadMap();
+            if (GameManager.Instance.BeginRun(selectedOption)) SceneController.Instance.LoadMap();
         }
     }
 }

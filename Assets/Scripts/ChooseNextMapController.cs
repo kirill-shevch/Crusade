@@ -96,27 +96,7 @@ public class ChooseNextMapController : MonoBehaviour
 
     void OnMapSelected(string mapName)
     {
-        var character = GameManager.Instance.SelectedCharacter;
-        
-        // Store permanent buffs
-        string permanentBuffs = PlayerPrefs.GetString("PermanentBuffs", "");
-        
-        GameManager.Instance.ResetGame();
-        
-        // Restore permanent buffs
-        PlayerPrefs.SetString("PermanentBuffs", permanentBuffs);
-        
-        // Save selected map
-        GameManager.Instance.SetCurrentMap(mapName);
-        GameManager.Instance.SetSelectedCharacter(character);
-        // Reset node position for new map
-        GameManager.Instance.SetCurrentNode(1);
-
-        Unit[] playerSquad = new Unit[] { new Unit { unit = character, placement = 1 } };
-        GameManager.Instance.SetPlayerSquad(new UnitArrayWrapper { units = playerSquad });
-        
-        // Load map scene
-        SceneManager.LoadScene("MapScene");
+        if (GameManager.Instance.NextMap(mapName)) SceneManager.LoadScene("MapScene");
     }
 
     // Update is called once per frame

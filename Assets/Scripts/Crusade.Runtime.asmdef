@@ -1,0 +1,4 @@
+{
+  "name": "Crusade.Runtime",
+  "references": ["Unity.TextMeshPro", "UnityEngine.UI"]
+}

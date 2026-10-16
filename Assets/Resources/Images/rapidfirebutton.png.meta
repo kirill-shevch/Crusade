@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      rapidfirebutton_0: 341475192425396736
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

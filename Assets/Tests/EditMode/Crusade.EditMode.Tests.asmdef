@@ -1,0 +1,6 @@
+{
+  "name": "Crusade.EditMode.Tests",
+  "references": ["Crusade.Runtime"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}
